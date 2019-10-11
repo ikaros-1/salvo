@@ -1,0 +1,36 @@
+body{
+  background-color: grey;  
+}
+
+
+
+submarine1{
+    height: 20px;
+    width: 20px;
+    background-color: lightblue;
+    border-radius:10px;
+    display:block;
+}
+submarine2{
+    height: 20px;
+    width: 20px;
+    background-color: red;
+    border-radius:1px;
+    display:block;
+}
+
+shooter{
+    height: 25px;
+    width: 25px;
+    border-style: initial;
+    background-color: red;
+    display: block;
+    text-align: center;
+    margin-right: 0;
+    margin-left: 0
+}
+
+td{
+    align-items: center;
+    justify-content: center;
+}
