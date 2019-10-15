@@ -1,38 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     
     <title>Salvo</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-2.2.0.js"></script>
-    <link rel="stylesheet" href="css/games.css">
+
 </head>
+
 <body>
     <div id="app" class="d-flex justify-content-center flex-column container align-items-center align-content-between">
         <div class="navbar navbar-expand-lg navbar-light bg-light w-100 d-flex flex-row justify-content-between">
-            <span class="navbar-brand mb-0 h1">Salvo!</span>
-            <div v-show="login === false">
-                <div class="form-inline my-2 my-lg-0" >
-                    <input v-model="user" class="form-control mr-sm-2" type="text" placeholder="username" aria-label="username">
-                    <input v-model="pass" class="form-control mr-sm-2" type="password" placeholder="password" aria-label="password">
-                    <button v-on:click="logIn" class="btn btn-outline-success my-2 my-sm-0" >Log In</button>
-                    <button v-on:click="signIn" class="btn btn-outline-success my-2 my-sm-0" >Sign In</button>
-                </div>
+            <div>
+                <span class="navbar-brand mb-0 h1">Salvo!</span>
+            </div>
+            <div v-show="login === false" class="form-inline my-2 my-lg-0 ml-5">
+
+                <input v-model="user" class="form-control mr-sm-2" type="text" placeholder="username"
+                    aria-label="username">
+                <input v-model="pass" class="form-control mr-sm-2" type="password" placeholder="password"
+                    aria-label="password">
+                <button v-on:click="logIn" class="btn btn-outline-success my-2 my-sm-0">Log In</button>
+                <button v-on:click="signIn" class="btn btn-outline-success my-2 my-sm-0">Sign In</button>
+
             </div>
             <div v-show="login === true">
                 <span>Hello, {{user}}</span>
-                <button v-on:click="logOut" class="btn btn-outline-success my-2 my-sm-0" >Log Out</button>
-            </div>"
+                <button v-on:click="logOut" class="btn btn-outline-success my-2 my-sm-0">Log Out</button>
+            </div>
 
         </div>
 
 
         <h2 class="h1 mt-4 mb-5">Tabla de puntuaciones</h2>
         <table id="scoring" class="table table-striped">
-
+            <thead>
+                <tr>
+                    <th>'Name'</th>
+                    <th>'Total'</th>
+                    <th>'Won'</th>
+                    <th>'Lost'</th>
+                    <th>'Tied'</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="row in table">
+                    <td>{{row.email}}</td>
+                    <td>{{row.total}}</td>
+                    <td>{{row.win}}</td>
+                    <td>{{row.lost}}</td>
+                    <td>{{row.tied}}</td>
+                </tr>
+            </tbody>
         </table>
     </div>
 </body>
+<link rel="shortcut icon" type="image/x-icon" href="" />
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+<link rel="stylesheet" href="css/games.css">
+<script src="https://code.jquery.com/jquery-2.2.0.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="js/games.js"></script>
+
+
 </html>
