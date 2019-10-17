@@ -67,13 +67,13 @@ public class Game {
         return scores;
     }
 
-    public static Map<String,Object> makeGamesDTO(Game game){
+    public Map<String,Object> toMakeGamesDTO(){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         Map map=new HashMap<String,Object>();
-        Set<GamePlayer> gamePlayers= game.getGamePlayers();
-        map.put("gameplayers", gamePlayers.stream().map(GamePlayer::makeGamesPlayerDTO));
-        map.put("created",game.getCreationDate().format(formatter));
-        map.put("id",game.getId());
+        Set<GamePlayer> gamePlayers= this.getGamePlayers();
+        map.put("gameplayers", gamePlayers.stream().map(GamePlayer::toMakeGamesPlayerDTO));
+        map.put("created",this.getCreationDate().format(formatter));
+        map.put("id",this.getId());
         return  map;
     }
 
@@ -85,10 +85,10 @@ public class Game {
         dto.put("Ships", ships.stream().map(Ship::makeShipDTO).collect(Collectors.toList()));
         return dto;
     }*/
-    public static Map<String,Object> makeGameScore(Game game){
+    public Map<String,Object> toMakeGameScore(){
         Map map=new HashMap<String,Object>();
-        map.put("id",game.getId());
-        map.put("gameplayers",game.getGamePlayers().stream().map(GamePlayer::makeGamesPlayerScore).collect(Collectors.toList()));
+        map.put("id",this.getId());
+        map.put("gameplayers",this.getGamePlayers().stream().map(GamePlayer::toMakeGamesPlayerScore).collect(Collectors.toList()));
         return map;
     }
 

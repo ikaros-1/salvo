@@ -14,14 +14,14 @@
                 <span class="navbar-brand mb-0 h1">Salvo!</span>
             </div>
             <div v-show="login === false" class="form-inline my-2 my-lg-0 ml-5">
-
+                <form>
                 <input v-model="user" class="form-control mr-sm-2" type="text" placeholder="username"
                     aria-label="username">
                 <input v-model="pass" class="form-control mr-sm-2" type="password" placeholder="password"
                     aria-label="password">
                 <button v-on:click="logIn" class="btn btn-outline-success my-2 my-sm-0">Log In</button>
                 <button v-on:click="signIn" class="btn btn-outline-success my-2 my-sm-0">Sign In</button>
-
+                </form>
             </div>
             <div v-show="login === true">
                 <span>Hello, {{user}}</span>
@@ -59,7 +59,7 @@
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
 <link rel="stylesheet" href="css/games.css">
-<script src="https://code.jquery.com/jquery-2.2.0.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="js/games.js"></script>
 

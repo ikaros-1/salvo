@@ -81,9 +81,9 @@ public class Player {
         return password;
     }
 
-    public void setPassword(String password) {
+ /*   public void setPassword(String password) {
         this.password = password;
-    }
+    }*/
 
     public Score getScore(Game game) {
         for (Score score : getScores()) {
@@ -93,20 +93,20 @@ public class Player {
         return null;
     }
 
-    public static Map<String,Object> makePlayerDTO(Player player){
+    public Map<String,Object> toMakePlayerDTO(){
         Map dto = new HashMap<String, Object>();
-        dto.put("email", player.getUserName());
-        dto.put("id", player.getId());
+        dto.put("email", this.getUserName());
+        dto.put("id", this.getId());
         return dto;
     }
 
-    public static Map<String,Object> makeScorePlayer(Player player){
+    public Map<String,Object> toMakeScorePlayer(){
         Map dto = new HashMap<String, Object>();
         float total=0;
         int win=0;
         int lost=0;
         int tied=0;
-        for (Score score1 : player.getScores()) {
+        for (Score score1 : this.getScores()) {
             switch (String.valueOf(score1.getScore())) {
                 case "1.0":
                     win++;
@@ -120,7 +120,7 @@ public class Player {
             }
             total+=score1.getScore();
         }
-        dto.put("email",player.getUserName());
+        dto.put("email",this.getUserName());
         dto.put("total",total);
         dto.put("win",win);
         dto.put("lost",lost);

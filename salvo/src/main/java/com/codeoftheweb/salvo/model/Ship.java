@@ -57,10 +57,10 @@ public class Ship {
         return location;
     }
 
-    public static Map<String,Object> makeShipDTO(Ship ship){
+    public Map<String,Object> toMakeShipDTO(){
         Map dto= new HashMap<String,Object>();
-        dto.put("type",ship.getTypeShip());
-        dto.put("location",ship.getLocations().stream().collect(Collectors.toList()));
+        dto.put("type",this.getTypeShip());
+        dto.put("location",this.getLocations().stream().collect(Collectors.toList()));
         return dto;
     }
 

@@ -85,29 +85,29 @@ public class GamePlayer {
         return null;
     }
 
-    public static Map<String,Object> makeGamesPlayerDTO(GamePlayer gamePlayer){
+    public Map<String,Object> toMakeGamesPlayerDTO(){
         Map dto = new HashMap<String, Object>();
-        dto.put("player", Player.makePlayerDTO(gamePlayer.getPlayer()));
-        dto.put("id", gamePlayer.getId());
+        dto.put("player", this.getPlayer().toMakePlayerDTO());
+        dto.put("id", this.getId());
         return dto;
     }
-    public static Map<String,Object> makeGameswithShip(GamePlayer gamePlayer){
+    public Map<String,Object> toMakeGameswithShip(){
         Set<Ship> ships = new HashSet<Ship>();
-        Map dto=Game.makeGamesDTO(gamePlayer.getGame());
-        dto.put("ships", gamePlayer.getShips().stream().map(Ship::makeShipDTO).collect(Collectors.toList()));
+        Map dto=this.getGame().toMakeGamesDTO();
+        dto.put("ships", this.getShips().stream().map(Ship::toMakeShipDTO).collect(Collectors.toList()));
         Set<Salvo> salvoes=new HashSet<>();
-        for (GamePlayer gamePlayer1 : gamePlayer.getGame().getGamePlayers()) {
+        for (GamePlayer gamePlayer1 : this.getGame().getGamePlayers()) {
             salvoes.addAll(gamePlayer1.getSalvoes());
         }
-        dto.put("salvo",salvoes.stream().map(Salvo::makeSalvoDTO).collect(Collectors.toList()));
+        dto.put("salvo",salvoes.stream().map(Salvo::toMakeSalvoDTO).collect(Collectors.toList()));
         return dto;
     }
 
-    public static Map<String,Object> makeGamesPlayerScore(GamePlayer gamePlayer){
+    public  Map<String,Object> toMakeGamesPlayerScore(){
         Map dto = new HashMap<String,Object>();
-        dto.put("id",gamePlayer.getId());
+        dto.put("id",this.getId());
 
-        dto.put("score",gamePlayer.getScore().getScore());
+        dto.put("score",this.getScore().getScore());
         return dto;
     }
 

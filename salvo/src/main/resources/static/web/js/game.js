@@ -1,14 +1,14 @@
 $(function(){
-    /*var id_gameplayer = $.urlParam("gp");
+    var id_gameplayer = $.urlParam("gp");
     maketable("#you");
     maketable("#oponent");
     if(id_gameplayer !=null){
         loadJsonShips(id_gameplayer);
     }
     else
-    alert("Debe pedir un id desde la url");*/
+    alert("Debe pedir un id desde la url");
 
-    tableScoring();
+
 })
 
 
@@ -34,10 +34,8 @@ $(function(){
   }*/
 
   function loadJsonShips(id){
-       $.get("/api/game_view/"+id,function(){
-            alert("Cargo")
-       })
-      .done(function(games) {
+       $.ajax({url:"/api/game_view/"+id,type:'GET',dataType:'json'})
+      .done((games)=> {
             games.ships.map(function(ship){
                 ship.location.map(function(loc){
                     console.log(loc)
@@ -63,7 +61,7 @@ $(function(){
             shooter(opp_shoot,'you');
             shooter(you_shoot,'oponent');
       })
-      .fail(function( jqXHR, textStatus ) {
+      .fail(( jqXHR, textStatus )=>{
         alert("fallo")
       });
   }
@@ -95,17 +93,4 @@ $(function(){
                 $('#'+table+' > .'+location).append('<shooter>'+shooter.turn+'</shooter>');
             })
         })
-   }
-
-   function tableScoring(){
-    $("#scoring").append("<thead><tr><th>'Name'</th><th>'Total'</th><th>'Won'</th><th>'Lost'</th><th>'Tied'</th></tr></thead>")
-    $.get("/api/leaderboard/").done(function (datos){
-        $("#scoring").append("<tbody>");
-        datos.map(dato =>{
-            $("#scoring").append("<tr><td>"+dato.email+"</td><td>"+dato.total+"</td><td>"+dato.win+"</td><td>"+dato.lost+"</td><td>"+dato.tied+"</td></tr>");
-        })
-        $("#scoring").append("</tbody>")
-    }).fail(function(error){
-        alert("fallo codigo"+error);
-    })
    }

@@ -63,11 +63,11 @@ public class Score {
         return finishDate;
     }
 
-    public Map<String,Object> makeScoreDTO(Score score){
+    public Map<String,Object> toMakeScoreDTO(){
         Map<String,Object> dto=new HashMap<>();
-        dto.put("id",score.getId());
-        dto.put("score",score.getScore());
-        dto.put("finish",score.getFinishDate());
+        dto.put("id",this.getId());
+        dto.put("score",this.getScore());
+        dto.put("finish",this.getFinishDate());
         return dto;
     }
 

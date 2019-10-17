@@ -17,7 +17,8 @@ const app = new Vue({
         this.tableScoring()
     },
     methods: {
-        logIn: function () {
+        logIn: function (event) {
+            event.preventDefault();
             $.post("/api/login", { username: this.user, password: this.pass }).done(() => {
                 this.login = true;
                 alert("Ha iniciado session con exito!!");
@@ -27,7 +28,8 @@ const app = new Vue({
                 alert(err.message);
             })
         },
-        signIn: function () {
+        signIn: function (event) {
+            event.preventDefault();
             $.post("/api/players", { username: this.user, password: this.pass }).done(() => {
                 alert("Gracias por registrarse!!");
                 //document.location.href="/web/games.html?this.login=true";
@@ -37,7 +39,8 @@ const app = new Vue({
                 alert(err.message);
             })
         },
-        logOut: function () {
+        logOut: function (event) {
+            event.preventDefault();
             $.post("/api/logout").done(() => {
                 this.login = false;
                 alert("Cerraste sesion con exito!!")
@@ -55,14 +58,19 @@ const app = new Vue({
             //$("#scoring").append("<thead><tr><th>'Name'</th><th>'Total'</th><th>'Won'</th><th>'Lost'</th><th>'Tied'</th></tr></thead>")
             $.get("/api/leaderboard")
                 .done( (datos)=> {
-                    this.login = true;
+
                     this.table = datos;
                 })
                 .fail((error)=> {
                     this.table = "";
-                    this.login = false;
+
                     console.log("fallo codigo" + error);
             })
+        },
+        isLogin:function(){
+            $.get("/api/login")
+                .done(()=>{this.login=true})
+                .fail(()=>{this.login=false})
         }
     },
 

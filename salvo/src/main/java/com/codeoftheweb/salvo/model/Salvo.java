@@ -57,11 +57,11 @@ public class Salvo {
         return locations;
     }
 
-    public static Map<String,Object> makeSalvoDTO(Salvo salvo){
+    public Map<String,Object> toMakeSalvoDTO(){
         Map dto= new HashMap<String,Object>();
-        dto.put("turn",salvo.getTurn());
-        dto.put("player",salvo.getGamePlayer().getPlayer());
-        dto.put("locations",salvo.getLocations());
+        dto.put("turn",this.getTurn());
+        dto.put("player",this.getGamePlayer().getPlayer());
+        dto.put("locations",this.getLocations());
         return dto;
     }
 
