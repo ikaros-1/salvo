@@ -5,10 +5,8 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 @Entity
 public class Score {
@@ -70,5 +68,6 @@ public class Score {
         dto.put("finish",this.getFinishDate());
         return dto;
     }
+
 
 }

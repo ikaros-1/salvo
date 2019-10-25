@@ -1,10 +1,14 @@
 package com.codeoftheweb.salvo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
@@ -17,9 +21,11 @@ public class GamePlayer {
     private long id;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="game_id")
+    @JsonIgnore
     private Game game;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="player_id")
+    @JsonIgnore
     private Player player;
 
     @OneToMany(mappedBy = "gamePlayer",fetch = FetchType.EAGER)
@@ -110,6 +116,15 @@ public class GamePlayer {
         dto.put("score",this.getScore().getScore());
         return dto;
     }
+
+    public  Map<String,Object> toMakeGamesPlayerGame(){
+        Map<String,Object> dto=new HashMap<>();
+        dto.put("gpid",this.getId());
+        dto.put("id",this.getPlayer().getId());
+        dto.put("username",this.getPlayer().getUserName());
+        return dto;
+    }
+
 
 
 }

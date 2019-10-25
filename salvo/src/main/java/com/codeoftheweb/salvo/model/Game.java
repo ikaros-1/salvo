@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -22,9 +21,11 @@ public class Game {
     private long id;
     private LocalDateTime creationDate;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "game",fetch = FetchType.EAGER)
     private Set<Score> scores;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "game",fetch = FetchType.EAGER)
     private Set<GamePlayer> gamePlayers;
 
@@ -40,7 +41,11 @@ public class Game {
         return ships;
     }
 
-    public Game(){this.creationDate= LocalDateTime.now();}
+    public Game(){
+        this.creationDate= LocalDateTime.now();
+        this.scores= new HashSet<>();
+        this.gamePlayers=new HashSet<>();
+    }
 
     public Game(GamePlayer gamePlayer){
         this.gamePlayers=new HashSet<GamePlayer>();
@@ -89,6 +94,14 @@ public class Game {
         Map map=new HashMap<String,Object>();
         map.put("id",this.getId());
         map.put("gameplayers",this.getGamePlayers().stream().map(GamePlayer::toMakeGamesPlayerScore).collect(Collectors.toList()));
+        return map;
+    }
+
+    public Map<String,Object> toMakeGamePlayer(){
+        Map<String,Object> map=new HashMap<String,Object>();
+        map.put("id",this.getId());
+        map.put("created",this.getCreationDate());
+        map.put("players",this.getGamePlayers().stream().map(GamePlayer::toMakeGamesPlayerGame).collect(Collectors.toList()));
         return map;
     }
 

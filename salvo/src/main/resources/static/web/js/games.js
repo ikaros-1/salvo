@@ -14,7 +14,8 @@ const app = new Vue({
         table: []
     },
     mounted: function () {
-        this.tableScoring()
+        this.tableScoring();
+        this.isLogin();
     },
     methods: {
         logIn: function (event) {
@@ -69,7 +70,13 @@ const app = new Vue({
         },
         isLogin:function(){
             $.get("/api/login")
-                .done(()=>{this.login=true})
+                 .done((json)=>{
+                  return JSON.parse(json)
+                 })
+                .done((json)=>{
+                this.login=true;
+                this.user=json.username;
+                })
                 .fail(()=>{this.login=false})
         }
     },

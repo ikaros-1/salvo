@@ -3,7 +3,9 @@ package com.codeoftheweb.salvo.configuration;
 import com.codeoftheweb.salvo.ActivePlayerStore;
 import com.codeoftheweb.salvo.component.LoggerPlayer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -18,6 +20,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     ActivePlayerStore activePlayerStore;
 
+    @Bean("authenticationManager")
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
@@ -28,6 +36,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/players").permitAll()
                 .antMatchers("/favicon.ico").permitAll()
                 .antMatchers("/api/leaderboard").permitAll()
+                .antMatchers("/api/guest").permitAll()
                 .antMatchers("/api/games").hasAuthority("USER")
                 .antMatchers("/api/games/**").hasAuthority("USER")
                 .antMatchers("/api/game_view/*").hasAuthority("USER")

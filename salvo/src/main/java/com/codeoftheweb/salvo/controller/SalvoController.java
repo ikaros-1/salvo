@@ -8,15 +8,25 @@ import com.codeoftheweb.salvo.model.Player;
 import com.codeoftheweb.salvo.repository.GamePlayerRepository;
 import com.codeoftheweb.salvo.repository.GameRepository;
 import com.codeoftheweb.salvo.repository.PlayerRepository;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -36,11 +46,13 @@ public class SalvoController {
     ActivePlayerStore activePlayerStore;
 
     //-------------------------------------------------------------
+    @Autowired
+    private AuthenticationManager authManager;
 
     @RequestMapping(path = "/login",method = RequestMethod.GET)
     public ResponseEntity<Object> IsLogin(Authentication auth){
         if(auth!=null)
-            return new ResponseEntity("Is loggin",HttpStatus.ACCEPTED);
+            return new ResponseEntity("{username:"+auth.getName()+"}",HttpStatus.ACCEPTED);
         else
             return new ResponseEntity("Not loggin",HttpStatus.UNAUTHORIZED);
     }
@@ -54,7 +66,7 @@ public class SalvoController {
         dto.put("players_online",activePlayerStore.getPlayers());*/
         List<Game> games=gameRepository.findAll();
         dto.put("games",games.stream().filter((game)->{
-            return game.getScores()==null;
+            return game.getGamePlayers().size()==1 && game.getScores().size()==0;
         }).collect(Collectors.toList()));
         return dto;
     }
@@ -65,28 +77,47 @@ public class SalvoController {
             return new ResponseEntity<>("if not logged in",HttpStatus.UNAUTHORIZED);
         Game game=new Game();
         gameRepository.save(game);
-        gamePlayerRepository.save(new GamePlayer(game,playerRepository.findByUserName(auth.getName())));
-        return new ResponseEntity<>("",HttpStatus.CREATED);
+        GamePlayer gamePlayer=new GamePlayer(game,playerRepository.findByUserName(auth.getName()));
+        gamePlayerRepository.save(gamePlayer);
+        Map<String,Object> dto=new HashMap<>();
+        dto.put("gpid",gamePlayer.getId());
+        return new ResponseEntity<>(dto,HttpStatus.CREATED);
     }
 
-    @RequestMapping(path = "/games/{id}/",method = RequestMethod.GET)
-    public Map<String,Object> get_Game_Players(@PathVariable("id")@NonNull Long id_Game){
+    @RequestMapping(path = "/games/{id}/player",method = RequestMethod.GET)
+    public ResponseEntity<Object> get_Game_Players(@PathVariable("id")@NonNull Long id_Game,Authentication auth){
         Game game=gameRepository.getOne(id_Game);
-        Map<String,Object> dto =new HashMap<>();
-        dto.put("Players",game.getPlayers());
-        return dto;
+        for(Player player : game.getPlayers()) {
+            if(player.isUsername(auth)){
+                Map<String,Object> dto =new HashMap<>();
+                dto.put("Game",game.toMakeGamePlayer());
+                return new ResponseEntity<>(dto,HttpStatus.ACCEPTED);
+            }
+        }
+        return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
     }
 
 
-    @RequestMapping(path="/games/{id}",method = RequestMethod.POST)
+    @RequestMapping(path="/games/{id}/players",method = RequestMethod.POST)
     public ResponseEntity<Object> join_Games(Authentication auth,@PathVariable("id")@NonNull Long id_Game){
         if(auth==null)
             return new ResponseEntity<>("if not logged in",HttpStatus.UNAUTHORIZED);
+        try{
         Game game=gameRepository.getOne(id_Game);
-        if(game.getGamePlayers().size()>1)
+
+            if(game.getGamePlayers().size()>1 )
             return new ResponseEntity<>("if no such game, game full, already member",HttpStatus.FORBIDDEN);
-        gamePlayerRepository.save(new GamePlayer(gameRepository.getOne(id_Game),playerRepository.findByUserName(auth.getName())));
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        if(game.getPlayers().contains(playerRepository.findByUserName(auth.getName())))
+            return new ResponseEntity<>("You has in the game",HttpStatus.FORBIDDEN);
+        GamePlayer gamePlayer=new GamePlayer(gameRepository.getOne(id_Game),playerRepository.findByUserName(auth.getName()));
+        gamePlayerRepository.save(gamePlayer);
+        Map<String,Object> dto=new HashMap<>();
+        dto.put("gpid",gamePlayer.getId());
+        return new ResponseEntity<>(dto,HttpStatus.CREATED);
+        }
+        catch(EntityNotFoundException e){
+            return new ResponseEntity<>("This game is not created",HttpStatus.FORBIDDEN);
+        }
     }
 
     //---------------------------------------------------------------
@@ -112,14 +143,36 @@ public class SalvoController {
     @RequestMapping(path="/players",method= RequestMethod.POST)
     public ResponseEntity<Object> register_Player(@RequestParam("username") String username,@RequestParam("password") String password){
 
-        if(username.isEmpty() || password.isEmpty()){
+        if(username.isEmpty() || password.isEmpty() ){
             return new ResponseEntity<>("Missing Data", HttpStatus.FORBIDDEN);
         }
-        if(playerRepository.findByUserName(username)!= null){
+        if(playerRepository.existsByUserName(username)== true || username.contains("guest")){
             return new ResponseEntity<>("Username already in use",HttpStatus.FORBIDDEN);
         }
         playerRepository.save(new Player(username,password));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @RequestMapping(path="/guest",method= RequestMethod.POST)
+    public ResponseEntity<Object> register_Guest(HttpServletRequest req){
+        try {
+            String username = "Guest" + LocalDateTime.now().getNano();
+            String password = String.valueOf(LocalDateTime.now().getNano());
+            while (playerRepository.existsByUserName(username)) {
+                username = "Guest" + LocalDateTime.now().getNano();
+            }
+            Player player = new Player(username, password);
+            playerRepository.save(player);
+            UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(username, password);
+            Authentication auth = authManager.authenticate(authReq);
+            SecurityContext sc = SecurityContextHolder.getContext();
+            sc.setAuthentication(auth);
+            HttpSession session = req.getSession(true);
+            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, sc);
+            return new ResponseEntity<>("{id:"+player.getId()+"}",HttpStatus.ACCEPTED);
+        }
+        catch (EntityNotFoundException e){
+            return new ResponseEntity<>(e.toString(),HttpStatus.CONFLICT);
+        }
+    }
 }

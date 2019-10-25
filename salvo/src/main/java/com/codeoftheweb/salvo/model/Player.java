@@ -3,6 +3,7 @@ package com.codeoftheweb.salvo.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
@@ -22,11 +23,12 @@ public class Player {
 
     private String password;
 
-    private boolean logging;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "player",fetch = FetchType.EAGER)
     private Set<Score> scores;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "player",fetch = FetchType.EAGER)
     private Set<GamePlayer> gamePlayers;
 
@@ -43,10 +45,13 @@ public class Player {
     public Player(String userName,String password){
         this.userName=userName;
         this.password=password;
+        this.gamePlayers=new HashSet<GamePlayer>();
+        this.scores=new HashSet<Score>();
     };
 
     public Player(String userName,String password,GamePlayer gamePlayer){
         this.gamePlayers=new HashSet<GamePlayer>();
+        this.scores=new HashSet<Score>();
         this.gamePlayers.add(gamePlayer);
         this.userName=userName;
         this.password=password;
@@ -92,6 +97,11 @@ public class Player {
         }
         return null;
     }
+    public boolean isUsername(Authentication auth){
+        if(auth.getName()==this.userName)
+            return true;
+        return false;
+    }
 
     public Map<String,Object> toMakePlayerDTO(){
         Map dto = new HashMap<String, Object>();
@@ -127,5 +137,7 @@ public class Player {
         dto.put("tied",tied);
         return dto;
     }
+
+
 
 }
