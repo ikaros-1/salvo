@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    
+
     <title>Salvo</title>
 
 </head>
@@ -15,12 +15,12 @@
             </div>
             <div v-show="login === false" class="form-inline my-2 my-lg-0 ml-5">
                 <form>
-                <input v-model="user" class="form-control mr-sm-2" type="text" placeholder="username"
-                    aria-label="username">
-                <input v-model="pass" class="form-control mr-sm-2" type="password" placeholder="password"
-                    aria-label="password">
-                <button v-on:click="logIn" class="btn btn-outline-success my-2 my-sm-0">Log In</button>
-                <button v-on:click="signIn" class="btn btn-outline-success my-2 my-sm-0">Sign In</button>
+                    <input v-model="user" class="form-control mr-sm-2" type="text" placeholder="username"
+                        aria-label="username">
+                    <input v-model="pass" class="form-control mr-sm-2" type="password" placeholder="password"
+                        aria-label="password">
+                    <button v-on:click="logIn" class="btn btn-outline-success my-2 my-sm-0">Log In</button>
+                    <button v-on:click="signIn" class="btn btn-outline-success my-2 my-sm-0">Sign In</button>
                 </form>
             </div>
             <div v-show="login === true">
@@ -29,29 +29,72 @@
             </div>
 
         </div>
+        
+        <div v-show="!login">
+            <h2 class="h1 mt-4 mb-5">Tabla de puntuaciones</h2>
+            <table id="scoring" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>'Name'</th>
+                        <th>'Total'</th>
+                        <th>'Won'</th>
+                        <th>'Lost'</th>
+                        <th>'Tied'</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="row in table">
+                        <td>{{row.email}}</td>
+                        <td>{{row.total}}</td>
+                        <td>{{row.win}}</td>
+                        <td>{{row.lost}}</td>
+                        <td>{{row.tied}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-
-        <h2 class="h1 mt-4 mb-5">Tabla de puntuaciones</h2>
-        <table id="scoring" class="table table-striped">
-            <thead>
-                <tr>
-                    <th>'Name'</th>
-                    <th>'Total'</th>
-                    <th>'Won'</th>
-                    <th>'Lost'</th>
-                    <th>'Tied'</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="row in table">
-                    <td>{{row.email}}</td>
-                    <td>{{row.total}}</td>
-                    <td>{{row.win}}</td>
-                    <td>{{row.lost}}</td>
-                    <td>{{row.tied}}</td>
-                </tr>
-            </tbody>
-        </table>
+        <div v-show="login" class="container d-flex flex-column w-100">
+            <div class="w-50 p-5">
+                <h2>Juegos Disponibles</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Fecha creado</th>
+                            <th>Creado por</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="row in games" @click="join(row.id)">
+                            <td>{{row.id}}</td>
+                            <td>{{row.created}}</td>
+                            <td>{{row.username}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="w-50 p-5">
+                <h2>Juegos Comenzados</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Fecha creado</th>
+                            <th>Oponente</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="row in mygames" @click="open(row.gp)">
+                            <td>{{row.id}}</td>
+                            <td>{{row.created}}</td>
+                            <td>{{row.oponent}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button class="btn btn-success btn-lg btn-block"> Crear juego</button>
+        </div>
     </div>
 </body>
 <link rel="shortcut icon" type="image/x-icon" href="" />

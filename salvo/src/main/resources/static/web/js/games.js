@@ -11,7 +11,9 @@ const app = new Vue({
         login: false,
         user: '',
         pass: '',
-        table: []
+        table: [],
+        games:[],
+        mygames:[]
     },
     mounted: function () {
         this.tableScoring();
@@ -78,6 +80,45 @@ const app = new Vue({
                 this.user=json.username;
                 })
                 .fail(()=>{this.login=false})
+        },
+        GetGames:function(){
+            $.get("/api/games")
+                 .done((json)=>{
+                  return JSON.parse(json)
+                 })
+                .done((json)=>{
+                    json
+                        .filter((game)=>{game.players.size<2})
+                        .map((game)=>this.games.push({id:game.id,created:game.created,username:game.players[0].username}));
+
+                    json
+                        .filter((game)=>game.players.indexOF(this.user))
+                        .map((game)=>(game.players.filter((player)=>player.username==this.user)))
+                        .map((game)=>this.mygames.push({id:game.id,created:game.created,oponent:game.players[0].username}));
+                })
+                .fail((err)=>{
+                    alert(err.message)
+                })
+        },
+        join:function(gp){
+            $.post("/games/{"+gp+"}/players")
+                .done((json)=>{
+                    return JSON.parse(json)
+                })
+                .done((game)=>window.open('/game.html?gp='+game.gpid, '_blank'))
+                .fail((err)=>{
+                    alert(err.message)
+                })
+        },
+        rejoin:function(gp){
+            $.get("/games/{"+gp+"}/players")
+                .done((json)=>{
+                    return JSON.parse(json)
+                })
+                .done((game)=>window.open('/game.html?gp='+game.gpid, '_blank'))
+                .fail((err)=>{
+                    alert(err.message)
+                })
         }
     },
 

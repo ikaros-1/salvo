@@ -66,8 +66,10 @@ public class SalvoController {
         dto.put("players_online",activePlayerStore.getPlayers());*/
         List<Game> games=gameRepository.findAll();
         dto.put("games",games.stream().filter((game)->{
-            return game.getGamePlayers().size()==1 && game.getScores().size()==0;
-        }).collect(Collectors.toList()));
+            return game.getScores().size()==0;
+        })
+                .map(Game::toMakeGamePlayer)
+                .collect(Collectors.toList()));
         return dto;
     }
 
@@ -87,10 +89,10 @@ public class SalvoController {
     @RequestMapping(path = "/games/{id}/player",method = RequestMethod.GET)
     public ResponseEntity<Object> get_Game_Players(@PathVariable("id")@NonNull Long id_Game,Authentication auth){
         Game game=gameRepository.getOne(id_Game);
-        for(Player player : game.getPlayers()) {
-            if(player.isUsername(auth)){
+        for(GamePlayer gamePlayer : game.getGamePlayers()) {
+            if(gamePlayer.getPlayer().isUsername(auth)){
                 Map<String,Object> dto =new HashMap<>();
-                dto.put("Game",game.toMakeGamePlayer());
+                dto.put("gpid",gamePlayer.getId());
                 return new ResponseEntity<>(dto,HttpStatus.ACCEPTED);
             }
         }
