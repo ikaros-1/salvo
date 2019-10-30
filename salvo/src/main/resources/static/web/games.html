@@ -4,7 +4,12 @@
 <head>
 
     <title>Salvo</title>
-
+    <link rel="shortcut icon" type="image/x-icon" href="" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="css/games.css">
+    
 </head>
 
 <body>
@@ -30,7 +35,7 @@
 
         </div>
         
-        <div v-show="!login">
+        <div v-show="login === false">
             <h2 class="h1 mt-4 mb-5">Tabla de puntuaciones</h2>
             <table id="scoring" class="table table-striped">
                 <thead>
@@ -54,7 +59,8 @@
             </table>
         </div>
 
-        <div v-show="login" class="container d-flex flex-column w-100">
+        <div v-show="login === true" >
+            <div class=" d-flex flex-row w-100 flex-wrap">
             <div class="w-50 p-5">
                 <h2>Juegos Disponibles</h2>
                 <table class="table">
@@ -85,26 +91,22 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="row in mygames" @click="open(row.gp)">
-                            <td>{{row.id}}</td>
+                        <tr v-for="row in mygames" @click="rejoin(row.id)">
+                            <td class="link">{{row.id}}</td>
                             <td>{{row.created}}</td>
                             <td>{{row.oponent}}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <button class="btn btn-success btn-lg btn-block"> Crear juego</button>
+            <button class="btn btn-success btn-lg btn-block w-100" @click="created()"> Crear juego</button>
+            </div>
         </div>
     </div>
 </body>
-<link rel="shortcut icon" type="image/x-icon" href="" />
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-<link rel="stylesheet" href="css/games.css">
 <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<script src="js/games.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="js/games.js"></script>
 
 </html>

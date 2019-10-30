@@ -55,8 +55,6 @@ public class SalvoApplication {
             gameRepository.save(game);
             gamePlayerRepository.save(new GamePlayer(gameRepository.getOne((long)2),playerRepository.getOne((long)1)));
             gamePlayerRepository.save(new GamePlayer(gameRepository.getOne((long)2),playerRepository.getOne((long)2)));
-            game=new Game();
-            gameRepository.save(game);
 
             List<String> localitation1 = Arrays.asList(new String[]{"H1", "H2", "H3"});
 

@@ -51,8 +51,10 @@ public class SalvoController {
 
     @RequestMapping(path = "/login",method = RequestMethod.GET)
     public ResponseEntity<Object> IsLogin(Authentication auth){
+        Map<String,Object> dto=new HashMap<>();
+        dto.put("username",auth.getName());
         if(auth!=null)
-            return new ResponseEntity("{username:"+auth.getName()+"}",HttpStatus.ACCEPTED);
+            return new ResponseEntity(dto,HttpStatus.ACCEPTED);
         else
             return new ResponseEntity("Not loggin",HttpStatus.UNAUTHORIZED);
     }
