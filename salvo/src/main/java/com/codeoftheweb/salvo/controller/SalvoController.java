@@ -5,11 +5,14 @@ import com.codeoftheweb.salvo.ActivePlayerStore;
 import com.codeoftheweb.salvo.model.Game;
 import com.codeoftheweb.salvo.model.GamePlayer;
 import com.codeoftheweb.salvo.model.Player;
+import com.codeoftheweb.salvo.model.Ship;
 import com.codeoftheweb.salvo.repository.GamePlayerRepository;
 import com.codeoftheweb.salvo.repository.GameRepository;
 import com.codeoftheweb.salvo.repository.PlayerRepository;
+import com.codeoftheweb.salvo.repository.ShipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -41,6 +44,9 @@ public class SalvoController {
 
     @Autowired
     GamePlayerRepository gamePlayerRepository;
+
+    @Autowired
+    ShipRepository shipRepository;
 
     @Autowired
     ActivePlayerStore activePlayerStore;
@@ -124,6 +130,30 @@ public class SalvoController {
         }
     }
 
+    @RequestMapping(path="/games/players/{gamePlayerId}/ships",method = RequestMethod.POST)
+    public ResponseEntity<Object> addShip(Authentication auth,@PathVariable("gamePlayerId")@NonNull Long id_GamePlayer,@RequestBody Ship[] ships){
+        try {
+            if (auth == null)
+                return new ResponseEntity<>("if not logged in", HttpStatus.UNAUTHORIZED);
+            GamePlayer gamePlayer = gamePlayerRepository.getOne((Long) id_GamePlayer);
+            if (!gamePlayer.getPlayer().isUsername(auth))
+                return new ResponseEntity<>("Is not your gameplayer", HttpStatus.UNAUTHORIZED);
+            if (gamePlayer.getShips().size() != 0)
+                return new ResponseEntity<>("You landed your ships", HttpStatus.FORBIDDEN);
+            if (ships.length != 5)
+                return new ResponseEntity<>("You send bad ships", HttpStatus.NOT_ACCEPTABLE);
+            else
+            for(Ship ship :ships){
+                ship.setGamePlayer(gamePlayer);
+                shipRepository.save(ship);
+            }
+            return new ResponseEntity<>("", HttpStatus.CREATED);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>("You send bad ships", HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
     //---------------------------------------------------------------
 
     @GetMapping(path= "/game_view/{id}")
@@ -145,16 +175,20 @@ public class SalvoController {
     }
 
     @RequestMapping(path="/players",method= RequestMethod.POST)
-    public ResponseEntity<Object> register_Player(@RequestParam("username") String username,@RequestParam("password") String password){
-
-        if(username.isEmpty() || password.isEmpty() ){
+    public ResponseEntity<Object> register_Player(@RequestBody() Player player){
+        try{
+        if(player.getUserName().isEmpty() || player.getPassword().isEmpty() ){
             return new ResponseEntity<>("Missing Data", HttpStatus.FORBIDDEN);
         }
-        if(playerRepository.existsByUserName(username)== true || username.contains("guest")){
+        if(playerRepository.existsByUserName(player.getUserName())== true || player.getUserName().contains("guest")){
             return new ResponseEntity<>("Username already in use",HttpStatus.FORBIDDEN);
         }
-        playerRepository.save(new Player(username,password));
+        playerRepository.save(player);
         return new ResponseEntity<>(HttpStatus.CREATED);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>("Info players is bad",HttpStatus.FORBIDDEN);
+        }
     }
 
     @RequestMapping(path="/guest",method= RequestMethod.POST)

@@ -33,7 +33,12 @@ const app = new Vue({
         },
         signIn: function (event) {
             event.preventDefault();
-            $.post("/api/players", { username: this.user, password: this.pass }).done(() => {
+            var user={
+                "userName":this.user,
+                "password":this.pass
+            }
+
+            $.ajax({url:"/api/players",dataType:"json",type:"post",data:{"userName":this.user,"password":this.pass}}).done(() =>{
                 alert("Gracias por registrarse!!");
                 //document.location.href="/web/games.html?this.login=true";
                 //document.location.reload();
@@ -49,7 +54,8 @@ const app = new Vue({
                 alert("Cerraste sesion con exito!!")
                 //document.location.href="/web/games.html?this.login=false";
                 this.tableScoring();
-
+                this.games=[];
+                this.mygames=[];
             }).fail((err) => {
                 alert(err.message);
             })
@@ -105,6 +111,8 @@ const app = new Vue({
                 })
                 .fail((err)=>{
                     alert(err.message)
+                    this.games=[];
+                    this.mygames=[];
                 })
         },
         join:function(gp){

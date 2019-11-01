@@ -53,6 +53,10 @@ public class Ship {
         return gamePlayer;
     }
 
+    public void setGamePlayer(GamePlayer gamePlayer) {
+        this.gamePlayer = gamePlayer;
+    }
+
     public Collection<String> getLocations() {
         return location;
     }
