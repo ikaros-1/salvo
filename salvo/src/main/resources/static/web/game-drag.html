@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Salvo</title>
+    
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-2.2.0.js"></script>
+
+<link rel="stylesheet" href="css/game-drag.css">
+
+</head>
+
+<body>
+    <div id="App" class="d-flex justify-content-center flex-column container align-items-center align-content-between">
+        <h1 class="h1 mt-1 mb-2">Batalla naval</h1>
+
+        <h2>Ship Locations!</h2>
+        <ul id="Lista">
+
+        </ul>
+        <span>Players</span>
+        <span id="players"></span>
+        <div class="w-100 d-flex flex-row">
+            <h5>Tu tablero</h5>
+            <div class="wrapper">
+                <div v-for="item in header" class="square">
+                    <div v-show="item!=0">{{item}}</div>
+                    <div v-show="item==0"></div>
+                </div>
+                <div v-for="col in Column">
+                    <div v-dragable-for="row in headers" class="square" options='{"group":"people"}'>
+                        <div v-show="0" class="">{{col}}</div>
+                        <div data-row="" data-col="col"></div>
+                    </div>
+                </div>
+            </div>
+
+            <table class="table table-bordered m-3 w-50">
+                <h5>El enemigo</h5>
+                <thead>
+                    <th scope="col"></th>
+                    <th scope="col">1</th>
+                    <th scope="col">2</th>
+                    <th scope="col">3</th>
+                    <th scope="col">4</th>
+                    <th scope="col">5</th>
+                    <th scope="col">6</th>
+                    <th scope="col">7</th>
+                    <th scope="col">8</th>
+                    <th scope="col">9</th>
+                    <th scope="col">10</th>
+                </thead>
+                <tbody id="oponent">
+
+                </tbody>
+            </table>
+        </div>
+
+
+</body>
+<script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.5.2/vue.min.js"></script>
+<!-- CDNJS :: Sortable (https://cdnjs.com/) -->
+<script src="//cdn.jsdelivr.net/npm/sortablejs@1.8.4/Sortable.min.js"></script>
+<!-- CDNJS :: Vue.Draggable (https://cdnjs.com/) -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
+<script src="js/game-drag.js"></script>
+</html>

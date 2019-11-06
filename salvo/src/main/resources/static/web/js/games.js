@@ -38,7 +38,7 @@ const app = new Vue({
                 "password":this.pass
             }
 
-            $.ajax({url:"/api/players",dataType:"json",type:"post",data:{"userName":this.user,"password":this.pass}}).done(() =>{
+            $.post("/api/players",JSON.stringify({userName : this.user, password : this.pass}),()=>{},'json').done(() =>{
                 alert("Gracias por registrarse!!");
                 //document.location.href="/web/games.html?this.login=true";
                 //document.location.reload();
