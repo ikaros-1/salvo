@@ -9,11 +9,16 @@
     background-color: gray;
 }
 .wrapper{
-    width:520px;
-    height:520px;
-    border: 2px 2px 2px 2px black;
+    width:550px;
+    height:550px;
+    display:flex;
+    flex-direction: row;
 }
 .Tittle{
     background: black;
     color: white;
+}
+.Battleship{
+    width: 50px;
+    height: 200px;
 }

@@ -30,6 +30,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/web/game-drag.html").permitAll()
+                .antMatchers("/web/image/**").permitAll()
                 .antMatchers("/web/games.html").permitAll()
                 .antMatchers("/web/js/**").permitAll()
                 .antMatchers("/web/css/**").permitAll()
