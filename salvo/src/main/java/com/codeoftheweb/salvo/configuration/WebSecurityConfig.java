@@ -32,6 +32,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/web/game-drag.html").permitAll()
                 .antMatchers("/web/games.html").permitAll()
                 .antMatchers("/web/js/**").permitAll()
+                .antMatchers("/web/image/**").permitAll()
                 .antMatchers("/web/css/**").permitAll()
                 .antMatchers("/api/login").permitAll()
                 .antMatchers("/api/players").permitAll()

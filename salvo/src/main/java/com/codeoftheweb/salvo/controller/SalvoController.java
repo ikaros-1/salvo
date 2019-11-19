@@ -174,7 +174,7 @@ public class SalvoController {
         return players.stream().map(Player::toMakeScorePlayer).collect(Collectors.toList());
     }
 
-    @RequestMapping(path="/players",method= RequestMethod.POST)
+    @RequestMapping(path="/players",method= RequestMethod.GET)
     public ResponseEntity<Object> register_Player(@RequestBody() Player player){
         try{
         if(player.getUserName().isEmpty() || player.getPassword().isEmpty() ){
@@ -191,7 +191,7 @@ public class SalvoController {
         }
     }
 
-    @RequestMapping(path="/guest",method= RequestMethod.POST)
+    @RequestMapping(path="/guest",method= RequestMethod.GET)
     public ResponseEntity<Object> register_Guest(HttpServletRequest req){
         try {
             String username = "Guest" + LocalDateTime.now().getNano();
