@@ -45,25 +45,18 @@
 
                 <button class="align-self-center " v-show="!ship" v-on:click="sendShips">Enviar barcos</button>
             </div>
-            <table class="table table-bordered m-3 w-50">
-                <h5>El enemigo</h5>
-                <thead>
-                    <th scope="col"></th>
-                    <th scope="col">1</th>
-                    <th scope="col">2</th>
-                    <th scope="col">3</th>
-                    <th scope="col">4</th>
-                    <th scope="col">5</th>
-                    <th scope="col">6</th>
-                    <th scope="col">7</th>
-                    <th scope="col">8</th>
-                    <th scope="col">9</th>
-                    <th scope="col">10</th>
-                </thead>
-                <tbody id="oponent">
+            <div class="w-50 p-2 d-flex flex-column">
+                <h5 class="text-center">El enemigo</h5>
+                <div class="grid-shoot">
 
-                </tbody>
-            </table>
+                    <div id="grid" class="grid-stack grid-stack-10">
+
+                    </div>
+                    
+                </div>
+
+                <button class="align-self-center " v-show="!ship" v-on:click="sendShips">Enviar barcos</button>
+            </div>
         </div>
 
     </div>
@@ -78,7 +71,7 @@
 <script src="js/dist/jquery.ui.touch-punch.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<script src="js/main.js"></script>
+
 <script src="js/game-drag.js"></script>
 
 

@@ -1,6 +1,8 @@
 package com.codeoftheweb.salvo.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -28,6 +30,14 @@ public class Ship {
     private List<String> location;
 
     public Ship(){};
+
+    @JsonCreator
+    public Ship(@JsonProperty("name") String name,@JsonProperty("locations") String[] locations){
+        this.gamePlayer=null;
+        this.location=Arrays.asList(locations);
+        this.typeShip=TypeShip.valueOf(name);
+    }
+
 
     public Ship(TypeShip typeShip,GamePlayer gamePlayer,List<String> locations){
         this.typeShip=typeShip;

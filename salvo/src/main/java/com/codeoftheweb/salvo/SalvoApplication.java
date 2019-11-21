@@ -58,15 +58,15 @@ public class SalvoApplication {
 
             List<String> localitation1 = Arrays.asList(new String[]{"H1", "H2", "H3"});
 
-            shipRepository.save(new Ship(TypeShip.BattleShip,gamePlayerRepository.getOne((long)1),localitation1));
+            shipRepository.save(new Ship(TypeShip.Battleship,gamePlayerRepository.getOne((long)1),localitation1));
 //
             localitation1 = Arrays.asList(new String[]{"A2", "B2", "C2"});
 
-            shipRepository.save(new Ship(TypeShip.BattleShip,gamePlayerRepository.getOne((long)1),localitation1));
+            shipRepository.save(new Ship(TypeShip.Battleship,gamePlayerRepository.getOne((long)1),localitation1));
 
             localitation1 = Arrays.asList(new String[]{"A1", "A2", "A3"});
 
-            shipRepository.save(new Ship(TypeShip.BattleShip,gamePlayerRepository.getOne((long)2),localitation1));
+            shipRepository.save(new Ship(TypeShip.Battleship,gamePlayerRepository.getOne((long)2),localitation1));
 
             localitation1=Arrays.asList(new String[]{"F5","D6","A9"});
 

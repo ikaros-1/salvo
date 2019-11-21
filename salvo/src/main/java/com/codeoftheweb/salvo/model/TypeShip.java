@@ -9,10 +9,10 @@ import java.util.Arrays;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum TypeShip{
     Carrier("Carrier",5),
-    BattleShip("Battleship",4),
+    Battleship("Battleship",4),
     Destroyer("Destroyer",3),
     Submarine("Submarine",3),
-    Patrol("Patrol_boat",2);
+    Patrol_boat("Patrol_boat",2);
 
     private String name;
     private int length;
