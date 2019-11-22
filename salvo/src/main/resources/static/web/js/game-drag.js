@@ -1,18 +1,22 @@
+var grid = null;
+var shoot = null;
 const app = new Vue({
   el: "#app",
-  mounted(){
+  created() {
+    this.loadJsonShips(urlParam("gp"));
+  },
+  mounted() {
     this.loadgrid();
-    console.log("mounted")
-  },
-  destroyed() {
-    console.log("destoyed")
-  },
-  updated() {
-    console.log("updated")
+    this.loadshoot();
+    console.log("mounted");
   },
   data: {
-    ship:false,
+    ship: false,
     ships: [],
+    you: "",
+    oponent: "",
+    you_shoot: null,
+    oponent_shoot: null,
     options: {
       //matriz 10 x 10
       width: 10,
@@ -39,82 +43,177 @@ const app = new Vue({
   },
   methods: {
     sendShips: () => {
-      var _ships = []
-      var typeships = [{ name: "carrier", lenght: 5 }, { name: "battleship", lenght: 4 }, { name: "submarine", lenght: 3 }, { name: "destroyer", lenght: 3 }, { name: "patrol_boat", lenght: 2 }];
-      typeships.map((type) => {
-        _ships.push({ name: (type.name[0].toUpperCase() + type.name.slice(1)), locations: changeLocation($("#" + type.name)[0].dataset) });
-      })
+      var _ships = [];
+      var typeships = [
+        { name: "carrier", lenght: 5 },
+        { name: "battleship", lenght: 4 },
+        { name: "submarine", lenght: 3 },
+        { name: "destroyer", lenght: 3 },
+        { name: "patrol_boat", lenght: 2 }
+      ];
+      typeships.map(type => {
+        _ships.push({
+          name: type.name[0].toUpperCase() + type.name.slice(1),
+          locations: changeLocation($("#" + type.name)[0].dataset)
+        });
+      });
 
-      console.log(_ships)
+      console.log(_ships);
       $.ajax({
-        url: '/api/games/players/5/ships',
-        contentType: 'application/json',
-        type: 'POST',
+        url: "/api/games/players/5/ships",
+        contentType: "application/json",
+        type: "POST",
         data: JSON.stringify(_ships),
-        datatype: 'json'
+        datatype: "json"
       })
-        .done(function (data) { console.log(data); })
-        .fail(function (jqXHR, textStatus, errorThrown) { console.log(errorThrown) });
+        .done(function(data) {
+          console.log(data);
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+          console.log(errorThrown);
+        });
     },
-    loadgrid: function (id,shoot) {
-      $(id).gridstack(this.options);
+    loadgrid: function() {
+      $("#grid").gridstack(this.options);
 
-      grid = $('#grid').data('gridstack');
+      grid = $("#grid").data("gridstack");
 
-      if(!this.ship  && !this.shoot )
-        this.loadShipsDefault()
-      else if(!this.shoot)
-        this.loadShips()
+      if (!this.ship) this.loadShipsDefault();
+      else this.loadShips();
 
-
-      this.listenBusyCells('ships')
-      $('.grid-stack').on('change', () => this.listenBusyCells('ships'))
+      this.listenBusyCells("ships");
+      $(".grid-stack").on("change", () => this.listenBusyCells("ships"));
     },
-    loadShips: function () {
+    loadshoot: function() {
+      $("#shoot").gridstack(this.options);
+
+      shoot = $("#shoot").data("gridstack");
+
+      this.createGrid(11, $(".grid-shoot"), "shoot");
+      for (let i = 0; i < 10; i++) {
+        for (let j = 0; j < 10; j++) {
+          $(`#${"shoot"}${j}${i}`)
+            .removeClass("busy-cell")
+            .addClass("empty-cell");
+        }
+      }
     },
-    loadShipsDefault: function () {
-      grid.addWidget($('<div id="patrol_boat"><div class="grid-stack-item-content patrol_boatHorizontal"></div><div/>'),
-        0, 1, 2, 1);
+    loadShips: function() {
+      var shipdiv = null;
+      this.ship.map(_ship => {
+        if (_ship.locations.gsWidth > 1)
+          shipdiv = $(
+            '<div id="' +
+              _ship.typeships.name.toLowerCase() +
+              '"><div class="grid-stack-item-content ' +
+              _ship.typeships.name.toLowerCase() +
+              'Horizontal"></div><div/>'
+          );
+        else
+          shipdiv = $(
+            '<div id="' +
+              _ship.typeships.name.toLowerCase() +
+              '"><div class="grid-stack-item-content ' +
+              _ship.typeships.name.toLowerCase() +
+              'Horizontal"></div><div/>'
+          );
+        grid.addWidget(
+          shipdiv,
+          _ship.locations.gsWidth,
+          _ship.locations.gsWidth,
+          _ship.locations.gsWidth,
+          _ship.locations.gsWidth
+        );
 
-      grid.addWidget($('<div id="carrier"><div class="grid-stack-item-content carrierHorizontal"></div><div/>'),
-        1, 5, 5, 1);
+        //createGrid construye la estructura de la matriz
+        this.createGrid(11, $(".grid-ships"), "ships");
 
-      grid.addWidget($('<div id="battleship"><div class="grid-stack-item-content battleshipHorizontal"></div><div/>'),
-        3, 1, 4, 1);
+        //Inicializo los listenener para rotar los barcos, el numero del segundo rgumento
+        //representa la cantidad de celdas que ocupa tal barco
+        this.rotateShips("carrier", 5);
+        this.rotateShips("battleship", 4);
+        this.rotateShips("submarine", 3);
+        this.rotateShips("destroyer", 3);
+        this.rotateShips("patrol_boat", 2);
+      });
+    },
+    loadShipsDefault: function() {
+      grid.addWidget(
+        $(
+          '<div id="patrol_boat"><div class="grid-stack-item-content patrol_boatHorizontal"></div><div/>'
+        ),
+        0,
+        1,
+        2,
+        1
+      );
 
-      grid.addWidget($('<div id="submarine"><div class="grid-stack-item-content submarineVertical"></div><div/>'),
-        8, 2, 1, 3);
+      grid.addWidget(
+        $(
+          '<div id="carrier"><div class="grid-stack-item-content carrierHorizontal"></div><div/>'
+        ),
+        1,
+        5,
+        5,
+        1
+      );
 
-      grid.addWidget($('<div id="destroyer"><div class="grid-stack-item-content destroyerHorizontal"></div><div/>'),
-        7, 8, 3, 1);
+      grid.addWidget(
+        $(
+          '<div id="battleship"><div class="grid-stack-item-content battleshipHorizontal"></div><div/>'
+        ),
+        3,
+        1,
+        4,
+        1
+      );
 
+      grid.addWidget(
+        $(
+          '<div id="submarine"><div class="grid-stack-item-content submarineVertical"></div><div/>'
+        ),
+        8,
+        2,
+        1,
+        3
+      );
+
+      grid.addWidget(
+        $(
+          '<div id="destroyer"><div class="grid-stack-item-content destroyerHorizontal"></div><div/>'
+        ),
+        7,
+        8,
+        3,
+        1
+      );
 
       //createGrid construye la estructura de la matriz
-      this.createGrid(11, $(".grid-ships"), 'ships')
+      this.createGrid(11, $(".grid-ships"), "ships");
 
       //Inicializo los listenener para rotar los barcos, el numero del segundo rgumento
       //representa la cantidad de celdas que ocupa tal barco
-      this.rotateShips("carrier", 5)
-      this.rotateShips("battleship", 4)
-      this.rotateShips("submarine", 3)
-      this.rotateShips("destroyer", 3)
-      this.rotateShips("patrol_boat", 2)
+      this.rotateShips("carrier", 5);
+      this.rotateShips("battleship", 4);
+      this.rotateShips("submarine", 3);
+      this.rotateShips("destroyer", 3);
+      this.rotateShips("patrol_boat", 2);
     },
-    createGrid: function (size, element, id) {
+    createGrid: function(size, element, id) {
       // definimos un nuevo elemento: <div></div>
-      let wrapper = document.createElement('DIV')
+      let wrapper = document.createElement("DIV");
 
       // le agregamos la clase grid-wrapper: <div class="grid-wrapper"></div>
-      wrapper.classList.add('grid-wrapper')
+      wrapper.classList.add("grid-wrapper");
 
       //vamos armando la tabla fila por fila
       for (let i = 0; i < size; i++) {
         //row: <div></div>
-        let row = document.createElement('DIV')
+        let row = document.createElement("DIV");
         //row: <div class="grid-row"></div>
-        row.classList.add('grid-row')
+        row.classList.add("grid-row");
         //row: <div id="ship-grid-row0" class="grid-wrapper"></div>
-        row.id = `${id}-grid-row${i}`
+        row.id = `${id}-grid-row${i}`;
         /*
         wrapper:
                 <div class="grid-wrapper">
@@ -123,40 +222,40 @@ const app = new Vue({
                     </div>
                 </div>
         */
-        wrapper.appendChild(row)
+        wrapper.appendChild(row);
 
         for (let j = 0; j < size; j++) {
           //cell: <div></div>
-          let cell = document.createElement('DIV')
+          let cell = document.createElement("DIV");
           //cell: <div class="grid-cell"></div>
-          cell.classList.add('grid-cell')
+          cell.classList.add("grid-cell");
           //aqui entran mis celdas que ocuparan los barcos
           if (i > 0 && j > 0) {
             //cell: <div class="grid-cell" id="ships00"></div>
-            cell.id = `${id}${i - 1}${j - 1}`
+            cell.id = `${id}${i - 1}${j - 1}`;
           }
           //aqui entran las celdas cabecera de cada fila
           if (j === 0 && i > 0) {
             // textNode: <span></span>
-            let textNode = document.createElement('SPAN')
+            let textNode = document.createElement("SPAN");
             /*String.fromCharCode(): método estático que devuelve 
             una cadena creada mediante el uso de una secuencia de
             valores Unicode especificada. 64 == @ pero al entrar
             cuando i sea mayor a cero, su primer valor devuelto 
             sera "A" (A==65)
             <span>A</span>*/
-            textNode.innerText = String.fromCharCode(i + 64)
+            textNode.innerText = String.fromCharCode(i + 64);
             //cell: <div class="grid-cell" id="ships00"></div>
-            cell.appendChild(textNode)
+            cell.appendChild(textNode);
           }
           // aqui entran las celdas cabecera de cada columna
           if (i === 0 && j > 0) {
             // textNode: <span>A</span>
-            let textNode = document.createElement('SPAN')
+            let textNode = document.createElement("SPAN");
             // 1
-            textNode.innerText = j
+            textNode.innerText = j;
             //<span>1</span>
-            cell.appendChild(textNode)
+            cell.appendChild(textNode);
           }
           /*
           row:
@@ -164,20 +263,19 @@ const app = new Vue({
                   <div class="grid-cell"></div>
               </div>
           */
-          row.appendChild(cell)
+          row.appendChild(cell);
         }
       }
 
-      element.append(wrapper)
+      element.append(wrapper);
     },
-    rotateShips: function (shipType, cells) {
-
-      $(`#${shipType}`).click(function () {
+    rotateShips: function(shipType, cells) {
+      $(`#${shipType}`).click(function() {
         //document.getElementById("alert-text").innerHTML = `Rotaste: ${shipType}`
-        console.log($(this))
+        console.log($(this));
         //Establecemos nuevos atributos para el widget/barco que giramos
-        let x = +($(this).attr('data-gs-x'))
-        let y = +($(this).attr('data-gs-y'))
+        let x = +$(this).attr("data-gs-x");
+        let y = +$(this).attr("data-gs-y");
         /*
         this hace referencia al elemento que dispara el evento (osea $(`#${shipType}`))
         .children es una propiedad de sólo lectura que retorna una HTMLCollection "viva"
@@ -200,7 +298,11 @@ const app = new Vue({
             </div>
         </div>
         */
-        if ($(this).children().hasClass(`${shipType}Horizontal`)) {
+        if (
+          $(this)
+            .children()
+            .hasClass(`${shipType}Horizontal`)
+        ) {
           // grid.isAreaEmpty revisa si un array esta vacio**
           // grid.isAreaEmpty(fila, columna, ancho, alto)
           if (grid.isAreaEmpty(x, y + 1, 1, cells) || y + cells < 10) {
@@ -208,77 +310,163 @@ const app = new Vue({
               // grid.resize modifica el tamaño de un array(barco en este caso)**
               // grid.resize(elemento, ancho, alto)
               grid.resize($(this), 1, cells);
-              $(this).children().removeClass(`${shipType}Horizontal`);
-              $(this).children().addClass(`${shipType}Vertical`);
+              $(this)
+                .children()
+                .removeClass(`${shipType}Horizontal`);
+              $(this)
+                .children()
+                .addClass(`${shipType}Vertical`);
             } else {
               /* grid.update(elemento, fila, columna, ancho, alto)**
               este metodo actualiza la posicion/tamaño del widget(barco)
               ya que rotare el barco a vertical, no me interesa el ancho sino
               el alto
               */
-              grid.update($(this), null, 10 - cells)
+              grid.update($(this), null, 10 - cells);
               grid.resize($(this), 1, cells);
-              $(this).children().removeClass(`${shipType}Horizontal`);
-              $(this).children().addClass(`${shipType}Vertical`);
+              $(this)
+                .children()
+                .removeClass(`${shipType}Horizontal`);
+              $(this)
+                .children()
+                .addClass(`${shipType}Vertical`);
             }
-
-
           } else {
-            document.getElementById("alert-text").innerHTML = "A ship is blocking the way!"
+            document.getElementById("alert-text").innerHTML =
+              "A ship is blocking the way!";
           }
 
           //Este bloque se ejecuta si el barco que queremos girar esta en vertical
         } else {
-
           if (x + cells - 1 < 10) {
             grid.resize($(this), cells, 1);
-            $(this).children().addClass(`${shipType}Horizontal`);
-            $(this).children().removeClass(`${shipType}Vertical`);
+            $(this)
+              .children()
+              .addClass(`${shipType}Horizontal`);
+            $(this)
+              .children()
+              .removeClass(`${shipType}Vertical`);
           } else {
             /*en esta ocasion para el update me interesa el ancho y no el alto
             ya que estoy rotando a horizontal, por estoel tercer argumento no lo
             declaro (que es lo mismo que poner null o undefined)*/
-            grid.update($(this), 10 - cells)
+            grid.update($(this), 10 - cells);
             grid.resize($(this), cells, 1);
-            $(this).children().addClass(`${shipType}Horizontal`);
-            $(this).children().removeClass(`${shipType}Vertical`);
+            $(this)
+              .children()
+              .addClass(`${shipType}Horizontal`);
+            $(this)
+              .children()
+              .removeClass(`${shipType}Vertical`);
           }
-
         }
       });
-
     },
-    listenBusyCells: function (id) {
+    listenBusyCells: function(id) {
       /* id vendria a ser ships. Recordar el id de las celdas del tablero se arma uniendo 
       la palabra ships + fila + columna contando desde 0. Asi la primer celda tendra id
       ships00 */
       for (let i = 0; i < 10; i++) {
         for (let j = 0; j < 10; j++) {
           if (!grid.isAreaEmpty(i, j)) {
-            $(`#${id}${j}${i}`).addClass('busy-cell').removeClass('empty-cell')
+            $(`#${id}${j}${i}`)
+              .addClass("busy-cell")
+              .removeClass("empty-cell");
           } else {
-            $(`#${id}${j}${i}`).removeClass('busy-cell').addClass('empty-cell')
+            $(`#${id}${j}${i}`)
+              .removeClass("busy-cell")
+              .addClass("empty-cell");
           }
         }
       }
+    },
+    loadJsonShips(id) {
+      $.ajax({ url: "/api/game_view/" + id, type: "GET", dataType: "json" })
+        .done(games => {
+          this.you = games.gameplayers
+            .filter(gameplayer => {
+              return gameplayer.id == id;
+            })
+            .shift().player.email;
+          this.oponent = games.gameplayers
+            .filter(gameplayer => {
+              return gameplayer.id != id;
+            })
+            .shift().player.email;
+
+          if (typeof games.ships === "undefined" || games.ships.length == 0) {
+            this.ship = false;
+            return true;
+          } else {
+            this.ship = true;
+            this.ships = [];
+            games.ships.map(function(ship) {
+              this.ships.push({
+                name: ship.typeships.name,
+                locations: ArraychangeLocation(ship.locations),
+                long:ship.typeships.length
+              });
+            });
+          }
+          if (typeof games.salvo === "undefined" || games.salvo.length == 0) {
+            return true;
+          } else {
+            this.you_shoot = games.salvo.filter(salvos => {
+              return salvos.player.id == you.player.id;
+            });
+            this.opp_shoot = games.salvo.filter(salvos => {
+              return salvos.player.id == oponent.player.id;
+            });
+          }
+        })
+        .fail((jqXHR, textStatus) => {
+          alert("fallo");
+        });
     }
-
   }
-
-})
-
+});
 
 function changeLocation(data) {
   var locations = [];
   if (parseInt(data.gsWidth) < parseInt(data.gsHeight)) {
     for (var i = 0; i < data.gsHeight; i++) {
-      locations.push((String.fromCharCode(parseInt(data.gsY) + 65 + i)) + (parseInt(data.gsX + 1)));
+      locations.push(
+        String.fromCharCode(parseInt(data.gsY) + 65 + i) +
+          parseInt(data.gsX + 1)
+      );
     }
-  }
-  else {
+  } else {
     for (var i = 0; i < data.gsWidth; i++) {
-      locations.push((String.fromCharCode(parseInt(data.gsY) + 65)) + (parseInt(data.gsX) + i + 1));
+      locations.push(
+        String.fromCharCode(parseInt(data.gsY) + 65) +
+          (parseInt(data.gsX) + i + 1)
+      );
     }
   }
   return locations;
+}
+
+function ArraychangeLocation(data) {
+  var long = data.lenght;
+  var dataset = { gsY: 0, gsX: 0, gsHeight: 0, gsWidth: 0 };
+  if (data[0].charAt(0) == data[1].charAt(0)) {
+    dataset.gsWidth = data.lenght;
+    dataset.gsHeight = 1;
+  } else {
+    dataset.gsHeight = data.lenght;
+    dataset.gsWidth = 1;
+  }
+  dataset.gsY = charCodeAt(0) - 65;
+  dataset.gsX = charAt(1);
+  return dataset;
+}
+
+function urlParam(name) {
+  var results = new RegExp("[?&]" + name + "=([^&#]*)").exec(
+    window.location.href
+  );
+  if (results == null) {
+    return null;
+  }
+  return decodeURI(results[1]) || 0;
 }

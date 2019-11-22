@@ -34,7 +34,8 @@
         <div class="w-100 d-flex flex-row ">
             
             <div class="w-50 p-2 d-flex flex-column">
-                <h5 class="text-center">Tu tablero</h5>
+                <h4 class="text-center h4">{{you +"(you)"}}</h4>
+                <h5 class="text-center h3 font-weight-bold">Tu tablero</h5>
                 <div class="grid-ships">
 
                     <div id="grid" class="grid-stack grid-stack-10">
@@ -46,16 +47,17 @@
                 <button class="align-self-center " v-show="!ship" v-on:click="sendShips">Enviar barcos</button>
             </div>
             <div class="w-50 p-2 d-flex flex-column">
-                <h5 class="text-center">El enemigo</h5>
+                <h4 class="text-center h4 ">{{oponent}}</h4>
+                <h5 class="text-center h3 font-weight-bold">El enemigo</h5>
                 <div class="grid-shoot">
 
-                    <div id="grid" class="grid-stack grid-stack-10">
+                    <div id="shoot" class="grid-stacks grid-stack-10">
 
                     </div>
                     
                 </div>
 
-                <button class="align-self-center " v-show="!ship" v-on:click="sendShips">Enviar barcos</button>
+                
             </div>
         </div>
 
