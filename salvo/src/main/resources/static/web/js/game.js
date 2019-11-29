@@ -58,7 +58,7 @@ const app = new Vue({
 
       console.log(_ships);
       $.ajax({
-        url: "/api/games/players/5/ships",
+        url: "/api/games/players/"+urlParam("gp")+"/ships",
         contentType: "application/json",
         type: "POST",
         data: JSON.stringify(_ships),
@@ -102,42 +102,42 @@ const app = new Vue({
     },
     loadShips: function() {
       var shipdiv = null;
-      this.ship.map(_ship => {
+      this.ships.map(_ship => {
         if (_ship.locations.gsWidth > 1)
           shipdiv = $(
             '<div id="' +
-              _ship.typeships.name.toLowerCase() +
+              _ship.name.toLowerCase() +
               '"><div class="grid-stack-item-content ' +
-              _ship.typeships.name.toLowerCase() +
+              _ship.name.toLowerCase() +
               'Horizontal"></div><div/>'
           );
         else
           shipdiv = $(
             '<div id="' +
-              _ship.typeships.name.toLowerCase() +
+              _ship.name.toLowerCase() +
               '"><div class="grid-stack-item-content ' +
-              _ship.typeships.name.toLowerCase() +
-              'Horizontal"></div><div/>'
+              _ship.name.toLowerCase() +
+              'Vertical"></div><div/>'
           );
         grid.addWidget(
           shipdiv,
+          _ship.locations.gsX,
+          _ship.locations.gsY,
           _ship.locations.gsWidth,
-          _ship.locations.gsWidth,
-          _ship.locations.gsWidth,
-          _ship.locations.gsWidth
+          _ship.locations.gsHeight
         );
-        grid.
+      });
         //createGrid construye la estructura de la matriz
         this.createGrid(11, $(".grid-ships"), "ships");
 
         //Inicializo los listenener para rotar los barcos, el numero del segundo rgumento
         //representa la cantidad de celdas que ocupa tal barco
-        // this.rotateShips("carrier", 5);
-        // this.rotateShips("battleship", 4);
-        // this.rotateShips("submarine", 3);
-        // this.rotateShips("destroyer", 3);
-        // this.rotateShips("patrol_boat", 2);
-      });
+        this.rotateShips("carrier", 5);
+        this.rotateShips("battleship", 4);
+        this.rotateShips("submarine", 3);
+        this.rotateShips("destroyer", 3);
+        this.rotateShips("patrol_boat", 2);
+      
     },
     loadShipsDefault: function() {
       grid.addWidget(
@@ -403,9 +403,7 @@ const app = new Vue({
 
           
           if (typeof games.ships === "undefined" || games.ships.length == 0) {
-            this.ship = false;
             this.loadgrid();
-            this.loadshoot();
             return true;
           } else {
             this.ship = true;
@@ -419,7 +417,9 @@ const app = new Vue({
               });
             });
           }
+          this.loadgrid();
           if (typeof games.salvo === "undefined" || games.salvo.length == 0) {
+            this.loadshoot();
             return true;
           } else {
             this.you_shoot = games.salvo.filter(salvos => {
@@ -429,7 +429,6 @@ const app = new Vue({
               return salvos.player.id == oponent.player.id;
             });
           }
-          this.loadgrid();
           this.loadshoot();
           console.log("mounted");
         })
@@ -461,17 +460,17 @@ function changeLocation(data) {
 }
 
 function ArraychangeLocation(data) {
-  var long = data.lenght;
+  var long = data.length;
   var dataset = { gsY: 0, gsX: 0, gsHeight: 0, gsWidth: 0 };
   if (data[0].charAt(0) == data[1].charAt(0)) {
-    dataset.gsWidth = data.lenght;
+    dataset.gsWidth = data.length;
     dataset.gsHeight = 1;
   } else {
-    dataset.gsHeight = data.lenght;
+    dataset.gsHeight = data.length;
     dataset.gsWidth = 1;
   }
   dataset.gsY = data[0].charCodeAt(0) - 65;
-  dataset.gsX = data[0].charAt(1);
+  dataset.gsX = parseInt(data[0].charAt(1));
   return dataset;
 }
 
