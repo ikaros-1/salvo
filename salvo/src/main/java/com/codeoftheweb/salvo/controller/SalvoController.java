@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
-public class SalvoController {
+public class                                  SalvoController {
 
     @Autowired
     GameRepository gameRepository;
@@ -93,6 +93,7 @@ public class SalvoController {
         dto.put("gpid",gamePlayer.getId());
         return new ResponseEntity<>(dto,HttpStatus.CREATED);
     }
+
 
     @RequestMapping(path = "/games/{id}/player",method = RequestMethod.GET)
     public ResponseEntity<Object> get_Game_Players(@PathVariable("id")@NonNull Long id_Game,Authentication auth){
@@ -174,7 +175,7 @@ public class SalvoController {
         return players.stream().map(Player::toMakeScorePlayer).collect(Collectors.toList());
     }
 
-    @RequestMapping(path="/players",method= RequestMethod.GET)
+    @RequestMapping(path="/players",method= RequestMethod.POST)
     public ResponseEntity<Object> register_Player(@RequestBody() Player player){
         try{
         if(player.getUserName().isEmpty() || player.getPassword().isEmpty() ){

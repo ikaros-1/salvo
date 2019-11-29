@@ -1,63 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Salvo</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/dist/normalize.css" />
+    <link rel="stylesheet" href="css/dist/gridstack.css" />
+    <link rel="stylesheet" href="css/dist/gridstack-extra.css" />
+    <link rel="stylesheet" href="css/style.css" />
+
+
+
+    <link rel="stylesheet" href="css/game-drag.css">
+
 </head>
+
 <body>
-    <div class="d-flex justify-content-center flex-column container align-items-center align-content-between">
-    <h1 class="h1 mt-1 mb-2">Batalla naval</h1>
+    <div id="app" class="d-flex justify-content-center flex-column align-items-center align-content-between">
+        <h1 class="h1 mt-1 mb-2">Batalla naval</h1>
 
-    <h2>Ship Locations!</h2>
-    <ul id="Lista">
-    
-    </ul>
-    <span>Players</span>
-    <span id="players"></span>
-    <div class="w-100 d-flex flex-row">
-    <table class="table table-bordered m-3 w-50">
-        <thead>
-            <th scope="col"></th>
-            <th scope="col">1</th>
-            <th scope="col">2</th>
-            <th scope="col">3</th>
-            <th scope="col">4</th>
-            <th scope="col">5</th>
-            <th scope="col">6</th>
-            <th scope="col">7</th>
-            <th scope="col">8</th>
-            <th scope="col">9</th>
-            <th scope="col">10</th>
-        </thead>
-        <tbody id="you">
+        <h2>Ship Locations!</h2>
+        <ul id="Lista">
 
-        </tbody>
-    </table>
+        </ul>
+        <span>Players</span>
+        <span id="players"></span>
+        <div class="w-100 d-flex flex-row ">
+            
+            <div class="w-50 p-2 d-flex flex-column">
+                <div class="text-center h4 user">{{you +"(you)"}}</div>
+                <h5 class="text-center h3 font-weight-bold">Tu tablero</h5>
+                <div class="grid-ships">
 
-    <table class="table table-bordered m-3 w-50">
-        <thead>
-            <th scope="col"></th>
-            <th scope="col">1</th>
-            <th scope="col">2</th>
-            <th scope="col">3</th>
-            <th scope="col">4</th>
-            <th scope="col">5</th>
-            <th scope="col">6</th>
-            <th scope="col">7</th>
-            <th scope="col">8</th>
-            <th scope="col">9</th>
-            <th scope="col">10</th>
-        </thead>
-        <tbody id="oponent">
+                    <div id="grid" class="grid-stack grid-stack-10">
 
-        </tbody>
-    </table>
+                    </div>
+                    
+                </div>
+
+                <button class="align-self-center " v-show="!ship" v-on:click="sendShips">Enviar barcos</button>
+            </div>
+            <div class="w-50 p-2 d-flex flex-column">
+                <div class="text-center h4 user">{{oponent}}</div>
+                <h5 class="text-center h3 font-weight-bold">El enemigo</h5>
+                <div class="grid-shoot">
+
+                    <div id="shoot" class="grid-stacks grid-stack-10">
+
+                    </div>
+                    
+                </div>
+
+                
+            </div>
+        </div>
+
     </div>
-
-
 </body>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-<script src="https://code.jquery.com/jquery-2.2.0.js"></script>
+<!-- Entire bundle -->
+<script src="js/dist/jquery-3.4.1.min.js"></script>
+<script src="js/dist/lodash.min.js"></script>
+
+<script src="js/dist/jquery-ui.min.js"></script>
+<script src="js/dist/gridstack.js"></script>
+<script src="js/dist/gridstack.jQueryUI.js"></script>
+<script src="js/dist/jquery.ui.touch-punch.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
 <script src="js/game.js"></script>
-<link rel="stylesheet" href="css/game.css">
+
+
+
 </html>

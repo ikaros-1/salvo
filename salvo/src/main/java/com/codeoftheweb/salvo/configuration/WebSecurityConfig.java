@@ -29,6 +29,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
+                .antMatchers("/rest/**").permitAll()
                 .antMatchers("/web/game-drag.html").permitAll()
                 .antMatchers("/web/games.html").permitAll()
                 .antMatchers("/web/js/**").permitAll()
@@ -44,7 +45,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/game_view/*").hasAuthority("USER")
                 .antMatchers("/api/gameslist").hasAuthority("USER")
                 .antMatchers("/web/game.html").hasAuthority("USER")
-                .antMatchers("/rest/**").hasAuthority("ADMIN")
+
                 //.antMatchers("/rest/**").hasAuthority("ADMIN")
                 //.antMatchers("/web/**").permitAll()
                 .anyRequest().denyAll()

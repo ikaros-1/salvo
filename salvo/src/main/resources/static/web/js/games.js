@@ -33,19 +33,33 @@ const app = new Vue({
         },
         signIn: function (event) {
             event.preventDefault();
-            var user={
-                "userName":this.user,
-                "password":this.pass
-            }
-
-            $.post("/api/players",JSON.stringify({userName : this.user, password : this.pass}),()=>{},'json').done(() =>{
+            /*
+            $.post("/api/players",JSON.stringify({userName : this.user, password : this.pass}))
+            .done(() =>{
                 alert("Gracias por registrarse!!");
                 //document.location.href="/web/games.html?this.login=true";
                 //document.location.reload();
                 this.logIn(event);
             }).fail((err) => {
                 alert(err.message);
-            })
+            })*/
+            var that=this;
+            $.ajax({
+                url: "/api/players",
+                contentType: "application/json",
+                type: "POST",
+                data:JSON.stringify({userName : this.user, password : this.pass}),
+                datatype: "json",
+                success:function(data) {
+                    alert("Gracias por registrarse!!");
+                    that.logIn(event)
+                },
+                failure:function(jqXHR, textStatus, errorThrown) {
+                    alert(err.message);
+                }
+              })
+                
+
         },
         logOut: function (event) {
             event.preventDefault();
@@ -123,7 +137,6 @@ const app = new Vue({
                 })
         },
         rejoin:function(gp){
-            console.log(gp)
             $.get("/api/games/"+gp+"/player")
                 .done((game)=>window.open('/web/game.html?gp='+game.gpid, '_blank'))
                 .fail((err)=>{

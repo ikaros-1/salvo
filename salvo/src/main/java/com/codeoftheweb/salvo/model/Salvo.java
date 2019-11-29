@@ -58,7 +58,7 @@ public class Salvo {
     public Map<String,Object> toMakeSalvoDTO(){
         Map dto= new HashMap<String,Object>();
         dto.put("turn",this.getTurn());
-        dto.put("player",this.getGamePlayer().getPlayer());
+        dto.put("player",this.getGamePlayer().getId());
         dto.put("locations",this.getLocations());
         return dto;
     }
