@@ -71,6 +71,12 @@ public class Ship {
         return location;
     }
 
+    static public boolean validarShip(Ship ship){
+        if(ship.location.size()!=ship.typeShip.getLength())
+            return false;
+
+    }
+
     public Map<String,Object> toMakeShipDTO(){
         Map dto= new HashMap<String,Object>();
         dto.put("type",this.getTypeShip());

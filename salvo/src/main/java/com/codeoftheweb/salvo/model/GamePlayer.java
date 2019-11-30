@@ -125,6 +125,19 @@ public class GamePlayer {
         return dto;
     }
 
+    public int getTurn(){
+        int turn=0;
+        for(Salvo salvo:this.salvoes){
+            if(turn<salvo.getTurn())
+                turn=salvo.getTurn();
+        }
+        return turn+1;
+    }
 
-
+    public boolean isTurn(GamePlayer op){
+        if(this.getTurn()==op.getTurn())
+            return true;
+        else
+            return false;
+    }
 }

@@ -28,7 +28,10 @@ const app = new Vue({
                 this.tableScoring();
 
             }).fail((err) => {
-                alert(err.message);
+                if(err.responseText!="")
+                alert(err.responseText);
+                else
+                alert("error a iniciar sesion");
             })
         },
         signIn: function (event) {
@@ -54,8 +57,8 @@ const app = new Vue({
                     alert("Gracias por registrarse!!");
                     that.logIn(event)
                 },
-                failure:function(jqXHR, textStatus, errorThrown) {
-                    alert(err.message);
+                error:function(jqXHR, textStatus, errorThrown) {
+                    alert(jqXHR.responseText)
                 }
               })
                 
@@ -71,7 +74,10 @@ const app = new Vue({
                 this.games=[];
                 this.mygames=[];
             }).fail((err) => {
-                alert(err.message);
+                if(err.responseText!="")
+                alert(err.responseText);
+                else
+                alert("error al cerrar sesion");
             })
         },
         tableScoring: function () {
@@ -86,8 +92,10 @@ const app = new Vue({
                 })
                 .fail((error)=> {
                     this.table = "";
-
-                    console.log("fallo codigo" + error);
+                    if(err.responseText!="")
+                    alert(err.responseText);
+                    else
+                    alert("error al cargar tabla");
             })
         },
         isLogin:function(){
@@ -98,7 +106,9 @@ const app = new Vue({
                 this.user=json.username;
                 this.GetGames();
                 })
-                .fail(()=>{this.login=false})
+                .fail(()=>{
+                    this.login=false
+                })
         },
         GetGames:function(){
             $.get("/api/games")
@@ -124,7 +134,10 @@ const app = new Vue({
                         
                 })
                 .fail((err)=>{
-                    alert(err.message)
+                    if(err.responseText!="")
+                    alert(err.responseText);
+                    else
+                    alert("error al cargar juegos");
                     this.games=[];
                     this.mygames=[];
                 })
@@ -133,20 +146,32 @@ const app = new Vue({
             $.post("/api/games/"+gp+"/players")
                 .done((game)=>window.open('/web/game.html?gp='+game.gpid, '_blank'))
                 .fail((err)=>{
-                    alert(err.message)
+                    if(err.responseText!="")
+                    alert(err.responseText);
+                    else
+                    alert("error al unir al juego");
                 })
         },
         rejoin:function(gp){
             $.get("/api/games/"+gp+"/player")
                 .done((game)=>window.open('/web/game.html?gp='+game.gpid, '_blank'))
                 .fail((err)=>{
-                    alert(err.message)
+                    if(err.responseText!="")
+                    alert(err.responseText);
+                    else
+                    alert("error al ir al juego" );
                 })
         },
         created:function(){
             $.post("/api/games")
                 .done((game)=>{window.open('/web/game.html?gp='+game.gpid, '_blank')})
-                .fail((err)=>{alert(err.message)})
+                .fail((err)=>{
+                    if(err.responseText!="")
+                    alert(err.responseText);
+                    else
+                    alert("error al crear el juego");
+                
+                })
             
         }
     },

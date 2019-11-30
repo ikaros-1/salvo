@@ -11,6 +11,9 @@ const app = new Vue({
   data: {
     ship: false,
     ships: [],
+    shoot:true,
+    n_shoot:5,
+    shoots:[],
     you: "",
     oponent: "",
     you_shoot: null,
@@ -66,6 +69,7 @@ const app = new Vue({
       })
         .done(function(data) {
           console.log(data);
+          location.reload()
         })
         .fail(function(jqXHR, textStatus, errorThrown) {
           console.log(errorThrown);
@@ -96,7 +100,8 @@ const app = new Vue({
         for (let j = 0; j < 10; j++) {
           $(`#${"shoot"}${j}${i}`)
             .removeClass("busy-cell")
-            .addClass("empty-cell");
+            .addClass("empty-cell")
+            .bind("click",this.listenenerShoot())
         }
       }
     },
@@ -382,6 +387,15 @@ const app = new Vue({
         }
       }
     },
+    listenenerShoot:function(){
+
+    },
+    frontBackShoot:function(lock){
+      lock.replace("shoot","")
+      var y=String.fromCharCode(parseInt(lock.charAt(0))+65)
+      var x=pareInt(lock.charAt(0)+1)
+      return String(y+x);
+    },
     loadJsonShips(id) {
       $.ajax({ url: "/api/game_view/" + id, type: "GET", dataType: "json" })
         .done(games => {
@@ -445,7 +459,7 @@ function changeLocation(data) {
     for (var i = 0; i < data.gsHeight; i++) {
       locations.push(
         String.fromCharCode(parseInt(data.gsY) + 65 + i) +
-          parseInt(data.gsX + 1)
+          (parseInt(data.gsX )+ 1)
       );
     }
   } else {
@@ -470,7 +484,7 @@ function ArraychangeLocation(data) {
     dataset.gsWidth = 1;
   }
   dataset.gsY = data[0].charCodeAt(0) - 65;
-  dataset.gsX = parseInt(data[0].charAt(1));
+  dataset.gsX = parseInt(data[0].charAt(1))-1;
   return dataset;
 }
 

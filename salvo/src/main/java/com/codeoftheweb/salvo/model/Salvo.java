@@ -1,9 +1,12 @@
 package com.codeoftheweb.salvo.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +28,13 @@ public class Salvo {
 
     @ElementCollection
     private List<String> locations;
+
+    @JsonCreator
+    public Salvo(@JsonProperty("location") String[] location){
+        this.locations= Arrays.asList(location);
+        this.turn=0;
+        this.gamePlayer=null;
+    }
 
     public Salvo(GamePlayer gamePlayer,int turn,List<String> locations){
         this.gamePlayer=gamePlayer;
@@ -53,6 +63,14 @@ public class Salvo {
 
     public List<String> getLocations() {
         return locations;
+    }
+
+    public void setGamePlayer(GamePlayer gamePlayer) {
+        this.gamePlayer = gamePlayer;
+    }
+
+    public void setTurn(int turn) {
+        this.turn = turn;
     }
 
     public Map<String,Object> toMakeSalvoDTO(){

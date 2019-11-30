@@ -2,14 +2,8 @@ package com.codeoftheweb.salvo.controller;
 
 
 import com.codeoftheweb.salvo.ActivePlayerStore;
-import com.codeoftheweb.salvo.model.Game;
-import com.codeoftheweb.salvo.model.GamePlayer;
-import com.codeoftheweb.salvo.model.Player;
-import com.codeoftheweb.salvo.model.Ship;
-import com.codeoftheweb.salvo.repository.GamePlayerRepository;
-import com.codeoftheweb.salvo.repository.GameRepository;
-import com.codeoftheweb.salvo.repository.PlayerRepository;
-import com.codeoftheweb.salvo.repository.ShipRepository;
+import com.codeoftheweb.salvo.model.*;
+import com.codeoftheweb.salvo.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
@@ -51,6 +45,8 @@ public class                                  SalvoController {
     @Autowired
     ActivePlayerStore activePlayerStore;
 
+    @Autowired
+    SalvoRepository salvoRepository;
     //-------------------------------------------------------------
     @Autowired
     private AuthenticationManager authManager;
@@ -130,6 +126,18 @@ public class                                  SalvoController {
             return new ResponseEntity<>("This game is not created",HttpStatus.FORBIDDEN);
         }
     }
+    @RequestMapping(path="/games/players/{gamePlayerId}/ships",method = RequestMethod.GET)
+    public ResponseEntity<Object> getShips(Authentication auth,@PathVariable("gamePlayerId")@NonNull Long id_GamePlayer){
+        if(auth==null)
+            return new ResponseEntity<>("if not logged in",HttpStatus.UNAUTHORIZED);
+        GamePlayer gamePlayer=gamePlayerRepository.getOne(id_GamePlayer);
+        if(gamePlayer.getShips().size()==0)
+            return new ResponseEntity<>("The ships is not load",HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(gamePlayer.getShips().stream().map(Ship::toMakeShipDTO),HttpStatus.ACCEPTED);
+
+    }
+
+
 
     @RequestMapping(path="/games/players/{gamePlayerId}/ships",method = RequestMethod.POST)
     public ResponseEntity<Object> addShip(Authentication auth,@PathVariable("gamePlayerId")@NonNull Long id_GamePlayer,@RequestBody Ship[] ships){
@@ -149,6 +157,50 @@ public class                                  SalvoController {
                 shipRepository.save(ship);
             }
             return new ResponseEntity<>("", HttpStatus.CREATED);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>("You send bad ships", HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
+    @RequestMapping(path="/games/players/{gamePlayerId}/salvoes",method = RequestMethod.GET)
+    public ResponseEntity<Object> getSalvos(Authentication auth,@PathVariable("gamePlayerId")@NonNull Long id_GamePlayer){
+        if(auth==null)
+            return new ResponseEntity<>("if not logged in",HttpStatus.UNAUTHORIZED);
+        GamePlayer gamePlayer=gamePlayerRepository.getOne(id_GamePlayer);
+        if(gamePlayer.getSalvoes().size()==0)
+            return new ResponseEntity<>("The salvoes is not load",HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(gamePlayer.getSalvoes().stream().map(Salvo::toMakeSalvoDTO),HttpStatus.ACCEPTED);
+
+    }
+
+
+
+    @RequestMapping(path="/games/players/{gamePlayerId}/salvoes",method = RequestMethod.POST)
+    public ResponseEntity<Object> addSalvoes(Authentication auth,@PathVariable("gamePlayerId")@NonNull Long id_GamePlayer,@RequestBody Salvo salvo){
+        try {
+            if (auth == null)
+                return new ResponseEntity<>("if not logged in", HttpStatus.UNAUTHORIZED);
+            GamePlayer gamePlayer = gamePlayerRepository.getOne((Long) id_GamePlayer);
+            GamePlayer op=gamePlayer.getGame().getGamePlayers().stream().filter(gp->gp.getId()!=id_GamePlayer).collect(Collectors.toList()).get(0);
+            if (!gamePlayer.getPlayer().isUsername(auth))
+                return new ResponseEntity<>("Is not your gameplayer", HttpStatus.UNAUTHORIZED);
+            if(gamePlayer.getShips().size()!=5)
+                return new ResponseEntity<>("You send Ships first", HttpStatus.UNAUTHORIZED);
+            if (salvo.length != 5)
+                return new ResponseEntity<>("You send bad salvoes", HttpStatus.NOT_ACCEPTABLE);
+            if(gamePlayer.getSalvoes().size()==0){
+                salvo.setGamePlayer(gamePlayer);
+                salvo.setTurn(1);
+                return new ResponseEntity<>("",HttpStatus.ACCEPTED);
+            }
+            if(gamePlayer.isTurn(op)){
+                salvo.setGamePlayer(gamePlayer);
+                salvo.setTurn(gamePlayer.getTurn());
+                return new ResponseEntity<>("",HttpStatus.ACCEPTED);
+            }
+            else
+            return new ResponseEntity<>("You send salvo in your turn", HttpStatus.FORBIDDEN);
         }
         catch (Exception e){
             return new ResponseEntity<>("You send bad ships", HttpStatus.NOT_ACCEPTABLE);
