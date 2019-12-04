@@ -18,7 +18,7 @@ public enum TypeShip{
     private int length;
     private int id;
 
-    TypeShip(String name,int length) {
+    TypeShip(String name,int length,int id) {
         this.name = name;
         this.length=length;
         this.id=id;

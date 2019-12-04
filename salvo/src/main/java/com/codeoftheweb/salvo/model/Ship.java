@@ -72,9 +72,31 @@ public class Ship {
     }
 
     static public boolean validarShip(Ship ship){
+        int pos=0;
+        boolean changenumber=false;
         if(ship.location.size()!=ship.typeShip.getLength())
             return false;
-
+        if(ship.location.get(0).charAt(0)==ship.location.get(ship.location.size()-1).charAt(0)){
+            changenumber=true;
+        }
+        else{
+            changenumber=false;
+        }
+        for(String _location:ship.location){
+            if(!_location.matches("^[A-J]+[1-9]$|^[A-J]+[1]+[0]$"))
+                return false;
+            if(changenumber){
+                if(!(_location.charAt(0)==ship.location.get(pos).charAt(0)&& (Integer.parseInt(_location.substring(1))+pos)==Integer.parseInt(ship.location.get(pos).substring(1)))){
+                    return false;
+                }
+            }
+            else {
+                if(!(_location.charAt(1)==ship.location.get(pos).charAt(1)&& _location.codePointAt(0)==ship.location.get(pos).codePointAt(0)+pos  ))
+                    return false;
+            }
+            pos++;
+        }
+        return true;
     }
 
     public Map<String,Object> toMakeShipDTO(){

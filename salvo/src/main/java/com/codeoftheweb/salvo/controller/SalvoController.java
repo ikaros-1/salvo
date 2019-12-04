@@ -21,6 +21,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -150,8 +151,11 @@ public class                                  SalvoController {
             if (gamePlayer.getShips().size() != 0)
                 return new ResponseEntity<>("You landed your ships", HttpStatus.FORBIDDEN);
             if (ships.length != 5)
-                return new ResponseEntity<>("You send bad ships", HttpStatus.NOT_ACCEPTABLE);
-            else
+                return new ResponseEntity<>("You send bad count ships", HttpStatus.NOT_ACCEPTABLE);
+            if (!GamePlayer.ValidarTiposBarcos(ships))
+                return new ResponseEntity<>("You send bad type ships. Is one type ship", HttpStatus.NOT_ACCEPTABLE);
+            for(Ship ship:ships)if(Ship.validarShip(ship))
+                return new ResponseEntity<>("You send bad locations ships", HttpStatus.NOT_ACCEPTABLE);
             for(Ship ship :ships){
                 ship.setGamePlayer(gamePlayer);
                 shipRepository.save(ship);
@@ -187,14 +191,14 @@ public class                                  SalvoController {
                 return new ResponseEntity<>("Is not your gameplayer", HttpStatus.UNAUTHORIZED);
             if(gamePlayer.getShips().size()!=5)
                 return new ResponseEntity<>("You send Ships first", HttpStatus.UNAUTHORIZED);
-            if (salvo.length != 5)
-                return new ResponseEntity<>("You send bad salvoes", HttpStatus.NOT_ACCEPTABLE);
+            if(!gamePlayer.validarSalvoes(salvo))
+                return new ResponseEntity<>("You send Bad salvoes", HttpStatus.UNAUTHORIZED);
             if(gamePlayer.getSalvoes().size()==0){
                 salvo.setGamePlayer(gamePlayer);
                 salvo.setTurn(1);
                 return new ResponseEntity<>("",HttpStatus.ACCEPTED);
             }
-            if(gamePlayer.isTurn(op)){
+            else if(gamePlayer.isTurn(op)){
                 salvo.setGamePlayer(gamePlayer);
                 salvo.setTurn(gamePlayer.getTurn());
                 return new ResponseEntity<>("",HttpStatus.ACCEPTED);

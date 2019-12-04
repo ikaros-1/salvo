@@ -5,10 +5,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -139,5 +136,33 @@ public class GamePlayer {
             return true;
         else
             return false;
+    }
+//Verifica que se pongan 1 de cada tipo de barco
+    static public boolean validarTiposBarcos(Ship[] ships){
+        int sum=0;
+        int mul=1;
+        for(Ship _ship:ships){
+            sum+=_ship.getTypeShip().getId();
+            mul*=_ship.getTypeShip().getId();
+        }
+        if(sum!=15)
+            return false;
+        if(mul!=120)
+            return false;
+        return true;
+    }
+//Verifico los salvos
+    public boolean validarSalvoes(Salvo salvo) {
+        List<String> locations=new ArrayList<String>();
+        this.getSalvoes().stream().forEach(_salvo->locations.addAll(_salvo.getLocations()));
+        if (salvo.getLocations().size() != 5)
+            return false;
+        for (String location : salvo.getLocations()){
+            if (!(location.matches("^[A-J]+[1-9]$|^[A-J]+[1]+[0]$")))
+                return false;
+            if(locations.contains(locations))
+                return false;
+        }
+        return true;
     }
 }
