@@ -1,81 +1,78 @@
 .grid-stack-item-content {
     background-repeat: no-repeat;
-    
     cursor: -webkit-grab;
     cursor: -moz-grab;
 }
 
-.carrierHorizontal{
-    background-image: url('/web/image/ShipCarrierHull - copia.png') ;
+.carrierHorizontal {
+    background-image: url('/web/image/ShipCarrierHull - copia.png');
     background-size: 85% 100%;
     background-position: center;
 }
 
-.carrierVertical{
-    background-image: url('/web/image/ShipCarrierHull.png') ;
+.carrierVertical {
+    background-image: url('/web/image/ShipCarrierHull.png');
     background-size: 100% 85%;
     background-position: center;
     width: 45px !important;
 }
 
-.battleshipHorizontal{
+.battleshipHorizontal {
     background-image: url('/web/image/ShipBattleShipHull - copia.png');
     background-size: 85% 100%;
     background-position: center;
 }
 
-.battleshipVertical{
+.battleshipVertical {
     background-image: url('/web/image/ShipBattleShipHull.png');
     background-size: 100% 85%;
     background-position: center;
     width: 45px !important;
 }
 
-.submarineHorizontal{
+.submarineHorizontal {
     background-image: url('/web/image/ShipSubMarineHull - copia.png');
     background-size: 90% 100%;
     background-position: center;
 }
 
-.submarineVertical{
+.submarineVertical {
     background-image: url('/web/image/ShipSubMarineHull.png');
     background-size: 100% 90%;
     background-position: center;
     width: 45px !important;
 }
 
-.destroyerHorizontal{
+.destroyerHorizontal {
     background-image: url('/web/image/ShipDestroyerHull - copia.png');
     background-size: 100% 150%;
     background-position: center;
 }
 
-.destroyerVertical{
+.destroyerVertical {
     background-image: url('/web/image/ShipDestroyerHull.png');
     background-size: 150% 100%;
     background-position: center;
     width: 45px !important;
 }
 
-.patrol_boatHorizontal{
+.patrol_boatHorizontal {
     background-image: url('/web/image/ShipPatrolHull - copia.png');
     background-size: 100% 150%;
     background-position: center;
 }
 
-.patrol_boatVertical{
+.patrol_boatVertical {
     background-image: url('/web/image/ShipPatrolHull.png');
     background-size: 150% 100%;
     background-position: center;
     width: 45px !important;
 }
 
-
-
-.grid-ships{
+.grid-ships {
     background-image: url(ocean.gif);
     background-size: cover;
-    border: 2px solid rgb(128,128,128);
+    border: 2px solid rgb(128, 128, 128);
     border-radius: 10px;
     height: 495px;
     width: 495px;
@@ -83,10 +80,10 @@
     margin-top: 10vh
 }
 
-.grid-shoot{
+.grid-shoot {
     background-image: url(ocean.gif);
     background-size: cover;
-    border: 2px solid rgb(128,128,128);
+    border: 2px solid rgb(128, 128, 128);
     border-radius: 10px;
     height: 495px;
     width: 495px;
@@ -94,66 +91,74 @@
     margin-top: 10vh
 }
 
-
-#grid{
+#grid {
     margin: 45px 0 0 45px;
     position: absolute;
     width: 450px;
- 
 }
 
-#shoot{
+#shoot {
     margin: 45px 0 0 45px;
     position: absolute;
     width: 450px;
- 
 }
 
-.grid-wrapper{
+.grid-wrapper {
     display: absolute;
     display: flex;
     flex-direction: column;
 }
 
-.grid-row{
+.grid-row {
     display: flex;
     flex-direction: row;
 }
 
-.grid-cell{
+.grid-cell {
     display: flex;
     box-sizing: border-box;
     width: 45px;
     height: 45px;
-    border: 1.3px solid rgb(128,128,128);
+    border: 1.3px solid rgb(128, 128, 128);
     vertical-align: middle;
     font-weight: bold;
     text-align: center;
     align-items: center;
-}
-.grid-cell span{
-    
-    margin: auto
+    position: relative;
 }
 
-.busy-cell{
-    background-color: rgba(0,119,190,0.5);
-    
+.grid-cell span {
+    margin: auto;
 }
 
-.grid-row:first-child .grid-cell{
-    background-color: rgba(170,169,173,0.7);
+.busy-cell {
+    background-color: rgba(0, 119, 190, 0.5);
 }
 
-.grid-cell:first-child{
-    background-color: rgba(170,169,173,0.7);
+.grid-row:first-child .grid-cell {
+    background-color: rgba(170, 169, 173, 0.7);
 }
 
-#alert-text{
+.grid-cell:first-child {
+    background-color: rgba(170, 169, 173, 0.7);
+}
+
+#alert-text {
     color: red;
     text-align: center;
     display: block;
 }
-.user{
+
+.user {
     height: 28px;
-  }
+}
+
+.shootRed {
+    width: 50%;
+    height: 50%;
+    background-color: red;
+    border-radius: 50%;
+    position: absolute;
+    top: 25%;
+    left: 25%;
+}

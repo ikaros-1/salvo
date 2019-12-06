@@ -152,7 +152,7 @@ public class                                  SalvoController {
                 return new ResponseEntity<>("You landed your ships", HttpStatus.FORBIDDEN);
             if (ships.length != 5)
                 return new ResponseEntity<>("You send bad count ships", HttpStatus.NOT_ACCEPTABLE);
-            if (!GamePlayer.ValidarTiposBarcos(ships))
+            if (!GamePlayer.validarTiposBarcos(ships))
                 return new ResponseEntity<>("You send bad type ships. Is one type ship", HttpStatus.NOT_ACCEPTABLE);
             for(Ship ship:ships)if(Ship.validarShip(ship))
                 return new ResponseEntity<>("You send bad locations ships", HttpStatus.NOT_ACCEPTABLE);
