@@ -18,11 +18,9 @@ public class GamePlayer {
     private long id;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="game_id")
-    @JsonIgnore
     private Game game;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="player_id")
-    @JsonIgnore
     private Player player;
 
     @OneToMany(mappedBy = "gamePlayer",fetch = FetchType.EAGER)
@@ -55,28 +53,28 @@ public class GamePlayer {
     }
 
     public long getId() {
-        return id;
+        return this.id;
     }
 
     public Game getGame() {
-        return game;
+        return this.game;
     }
 
 
     public Player getPlayer() {
-        return player;
+        return this.player;
     }
 
     public LocalDateTime getJoinDate() {
-        return joinDate;
+        return this.joinDate;
     }
 
     public Set<Ship> getShips() {
-        return ships;
+        return this.ships;
     }
 
     public Set<Salvo> getSalvoes() {
-        return salvoes;
+        return this.salvoes;
     }
 
     public Score getScore(){
@@ -99,9 +97,11 @@ public class GamePlayer {
         Map dto=this.getGame().toMakeGamesDTO();
         dto.put("ships", this.getShips().stream().map(Ship::toMakeShipDTO).collect(Collectors.toList()));
         Set<Salvo> salvoes=new HashSet<>();
-        for (GamePlayer gamePlayer1 : this.getGame().getGamePlayers()) {
+        Game game=this.getGame();
+        for (GamePlayer gamePlayer1 : game.getGamePlayers()) {
             salvoes.addAll(gamePlayer1.getSalvoes());
         }
+
         dto.put("salvo",salvoes.stream().map(Salvo::toMakeSalvoDTO).collect(Collectors.toList()));
         return dto;
     }

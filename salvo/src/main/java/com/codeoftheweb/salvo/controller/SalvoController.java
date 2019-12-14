@@ -55,9 +55,10 @@ public class                                  SalvoController {
     @RequestMapping(path = "/login",method = RequestMethod.GET)
     public ResponseEntity<Object> IsLogin(Authentication auth){
         Map<String,Object> dto=new HashMap<>();
-        dto.put("username",auth.getName());
-        if(auth!=null)
-            return new ResponseEntity(dto,HttpStatus.ACCEPTED);
+        if(auth!=null) {
+            dto.put("username", auth.getName());
+            return new ResponseEntity(dto, HttpStatus.ACCEPTED);
+        }
         else
             return new ResponseEntity("Not loggin",HttpStatus.UNAUTHORIZED);
     }
@@ -196,7 +197,7 @@ public class                                  SalvoController {
             if(gamePlayer.getSalvoes().size()==0){
                 salvo.setGamePlayer(gamePlayer);
                 salvo.setTurn(1);
-                return new ResponseEntity<>("",HttpStatus.ACCEPTED);
+                return new ResponseEntity<>("Salvoes accepted",HttpStatus.ACCEPTED);
             }
             else if(gamePlayer.isTurn(op)){
                 salvo.setGamePlayer(gamePlayer);

@@ -25,13 +25,13 @@ public class Game {
     @OneToMany(mappedBy = "game",fetch = FetchType.EAGER)
     private Set<Score> scores;
 
-    @JsonIgnore
+
     @OneToMany(mappedBy = "game",fetch = FetchType.EAGER)
     private Set<GamePlayer> gamePlayers;
 
     @JsonIgnore
     public List<Player> getPlayers(){
-        return gamePlayers.stream().map(gameplayer-> gameplayer.getPlayer()).collect(toList());
+        return gamePlayers.stream().map(gameplayer-> gameplayer.getPlayer()).collect(Collectors.toList());
     }
 
     @JsonIgnore
@@ -57,7 +57,7 @@ public class Game {
     }
 
     public LocalDateTime getCreationDate() {
-        return creationDate;
+        return this.creationDate;
     }
 
     public long getId() {
@@ -65,11 +65,11 @@ public class Game {
     }
 
     public Set<GamePlayer> getGamePlayers() {
-        return gamePlayers;
+        return this.gamePlayers;
     }
 
     public Set<Score> getScores() {
-        return scores;
+        return this.scores;
     }
 
     public Map<String,Object> toMakeGamesDTO(){

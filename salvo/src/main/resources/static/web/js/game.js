@@ -17,7 +17,7 @@ const app = new Vue({
         you: "",
         oponent: "",
         you_shoot: null,
-        oponent_shoot: null,
+        oponent_shoot: undefined,
         options: {
             //matriz 10 x 10
             width: 10,
@@ -101,7 +101,7 @@ const app = new Vue({
                     $(`#${"shoot"}${j}${i}`)
                         .removeClass("busy-cell")
                         .addClass("empty-cell")
-                        .on('click', (e) => this.listenenerShoot(e.target));
+                        .on('click', (e) => this.listenenerShoot(e.target, String.fromCharCode(parseInt(j) + 65) + (i + 1)));
                 }
             }
         },
@@ -137,11 +137,11 @@ const app = new Vue({
 
             //Inicializo los listenener para rotar los barcos, el numero del segundo rgumento
             //representa la cantidad de celdas que ocupa tal barco
-            this.rotateShips("carrier", 5);
+            /*this.rotateShips("carrier", 5);
             this.rotateShips("battleship", 4);
             this.rotateShips("submarine", 3);
             this.rotateShips("destroyer", 3);
-            this.rotateShips("patrol_boat", 2);
+            this.rotateShips("patrol_boat", 2);*/
 
         },
         loadShipsDefault: function() {
@@ -378,18 +378,42 @@ const app = new Vue({
                     if (!grid.isAreaEmpty(i, j)) {
                         $(`#${id}${j}${i}`)
                             .addClass("busy-cell")
-                            .removeClass("empty-cell");
+                            .removeClass("empty-cell")
                     } else {
                         $(`#${id}${j}${i}`)
                             .removeClass("busy-cell")
-                            .addClass("empty-cell");
+                            .addClass("empty-cell")
                     }
+                    if (this.opp_shoot)
+                        if (this.opp_shoot.includes(String.fromCharCode(parseInt(j) + 65) + (i + 1)))
+                            $(`#${id}${j}${i}`).addClass("shootRed")
+
                 }
             }
         },
-        listenenerShoot: function(e) {
+        listenenerShoot: function(e, locations) {
+
             $("#" + e.id).html("<div class='shootRed'></div>")
-            console.log(e);
+            this.shoots.push(locations)
+            console.log(this.shoots)
+            if (this.shoots.length === 5) {
+                $.ajax({
+                        url: "/api/games/players/" + urlParam("gp") + "/salvoes",
+                        contentType: "application/json",
+                        type: "POST",
+                        data: JSON.stringify({ location: this.shoots }),
+                        datatype: "json"
+                    })
+                    .done(function(data) {
+                        console.log(data);
+                        location.reload()
+                    })
+                    .fail(function(jqXHR, textStatus, errorThrown) {
+                        console.log(errorThrown);
+                        //location.reload()
+                    });
+            }
+            $("#" + e.id).off("click")
         },
         frontBackShoot: function(lock) {
             lock.replace("shoot", "")
@@ -397,11 +421,11 @@ const app = new Vue({
             var x = pareInt(lock.charAt(0) + 1)
             return String(y + x);
         },
-        loadJsonShips(id) {
+        loadJsonShips: function(id) {
             $.ajax({ url: "/api/game_view/" + id, type: "GET", dataType: "json" })
                 .done(games => {
                     console.log(games)
-                    if (games.gameplayers.length = 1)
+                    if (games.gameplayers.length === 1)
                         this.you = games.gameplayers[0].player.email
                     else {
                         this.you = games.gameplayers
@@ -431,17 +455,17 @@ const app = new Vue({
                                 long: ship.type.length
                             });
                         });
+                        this.loadgrid();
                     }
-                    this.loadgrid();
                     if (typeof games.salvo === "undefined" || games.salvo.length == 0) {
                         this.loadshoot();
                         return true;
                     } else {
                         this.you_shoot = games.salvo.filter(salvos => {
-                            return salvos.player.id == you.player.id;
+                            return salvos.player == you.player.id;
                         });
                         this.opp_shoot = games.salvo.filter(salvos => {
-                            return salvos.player.id == oponent.player.id;
+                            return salvos.player == oponent.player.id;
                         });
                     }
                     this.loadshoot();
